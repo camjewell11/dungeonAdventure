@@ -2,9 +2,9 @@ import os, random, sys
 from random import randint
 from select import select
 
-import environment, IO
+import character, config, environment, IO
 
-character = "none"
+playerCharacter = "none"
 faction = "none"
 charFile = "none"
 inventoryFile = "none"
@@ -32,9 +32,9 @@ def start():
         selection = selection.lower()
         IO.print_dash(True)
         if selection == '1':
-            create_character()
+            character.create_character()
         elif selection == '2':
-            select_character()
+            character.select_character()
         elif selection == '3':
             play_game()
         elif selection == '4':
@@ -42,8 +42,8 @@ def start():
         elif selection == '5' or selection == 'q':
             break
         elif selection == 'debug':
-            if character == 'none':
-                select_character()
+            if playerCharacter == 'none':
+                character.select_character()
             debug_menu()
     else:
         print ("That was not a valid selection.\n")
@@ -65,11 +65,11 @@ def debug_menu():
         selection2 = selection2.lower()
         IO.print_dash(True)
         if selection2 == 'i':
-            display_info()
+            IO.display_info()
         elif selection2 == 'u':
             level_up()
         elif selection2 == 'e':
-            print (enemy_table)
+            print (config.enemy_table)
         elif selection2 == 'x':
             while True:
                 try:
@@ -101,8 +101,8 @@ def debug_menu():
 
 
 def settings():
-    if character == 'none':
-        select_character()
+    if playerCharacter == 'none':
+        character.select_character()
     global autotake
     while True:
         print ("         Settings            ")
@@ -168,339 +168,6 @@ def settings():
         else:
             print ("Invalid Selection.\n")
 
-def create_character():
-    print ("New Character Creation")
-    IO.print_dash()
-
-    while True:
-        name = input("Enter your name: ")
-        IO.print_dash()
-        filename = "characters/" + name + ".txt"
-        global character
-        global charFile
-        global inventoryFile
-        global faction
-
-        if os.path.isfile(filename):
-            print ("Character already exists.")
-            IO.print_dash(True)
-        else:
-            f = open(filename, "w")
-            f.write(name + "\n")
-            while True:
-                print ("\nSelect Faction")
-                IO.print_dash()
-                print ("Wizard         1")
-                print ("Archer         2")
-                print ("Warrior        3")
-                print ("Assassin       4")
-                IO.print_dash()
-                print ("View Stats     5\n")
-
-                selection = input("")
-                IO.print_dash(True)
-                if selection == '1':
-                    f.write("Wizard\n")
-                    faction = "Wizard"
-                    f.close()
-                    create_wizard(filename)
-                    break
-                elif selection == '2':
-                    f.write("Archer\n")
-                    faction = "Archer"
-                    f.close()
-                    create_archer(filename)
-                    break
-                elif selection == '3':
-                    f.write("Warrior\n")
-                    faction = "Warrior"
-                    f.close()
-                    create_warrior(filename)
-                    break
-                elif selection == '4':
-                    f.write("Assassin\n")
-                    faction = "Assassin"
-                    f.close()
-                    create_assassin(filename)
-                    break
-                elif selection == '5':
-                    display_faction_stats()
-                else:
-                    print ("That was not a valid selection.")
-            print ("Created new character, %s!" % name)
-            IO.print_dash(True)
-
-        character = name
-        charFile = filename
-        inventoryFile = "inventories/" + character + ".inv"
-
-        f = open(inventoryFile, "w")
-        f.write("Inventory\n")
-        f.write("Gold Pieces:0\n")
-        f.close()
-
-        break
-
-def select_character():
-    chars = os.listdir("characters")
-    print ("Which Character would you like to play as?")
-    spot = 0
-    for i in chars:
-        chars[spot] = i[:-4]
-        print ("- %s" % chars[spot])
-        spot += 1
-    print ("\nTo cancel            'c'")
-
-    while True:
-        choice = input("\n")
-        print ("")
-        if choice == 'c':
-            break
-        elif choice not in chars:
-            print ("%s is not a valid character." % choice)
-            IO.print_dash(True)
-            print ("Which Character would you like to play as?")
-            for i in chars:
-                print ("- %s" % i)
-        else:
-            print ("\nNow playing as %s." % choice)
-            IO.print_dash(True)
-
-            global character
-            global charFile
-            global inventoryFile
-            global faction
-
-            character = choice
-            charFile = "characters/%s.txt" % choice
-            inventoryFile = "inventories/%s.inv" % choice
-            faction = get_faction()
-            set_autotake()
-            set_autosneak()
-
-            break
-
-def display_faction_stats():
-    while True:
-        print ("Which faction would you like to view?")
-        IO.print_dash()
-        print ("Wizard         1")
-        print ("Archer         2")
-        print ("Warrior        3")
-        print ("Assassin       4\n")
-
-        selection = input("")
-        IO.print_dash(True)
-
-        if selection == '1':
-            print ("        Wizard       ")
-            IO.print_dash()
-            print ("Strength              2/10")
-            print ("Defense               2/10")
-            print ("Range                 8/10")
-            print ("Wisdom                8/10")
-            print ("Stealth               5/10")
-            print ("Luck                  5/10")
-            IO.print_dash()
-            break
-        elif selection == '2':
-            print ("        Archer       ")
-            IO.print_dash()
-            print ("Strength              2/10")
-            print ("Defense               6/10")
-            print ("Range                 8/10")
-            print ("Wisdom                6/10")
-            print ("Stealth               6/10")
-            print ("Luck                  7/10")
-            IO.print_dash()
-            break
-        elif selection == '3':
-            print ("        Warrior      ")
-            IO.print_dash()
-            print ("Strength              8/10")
-            print ("Defense               7/10")
-            print ("Range                 2/10")
-            print ("Wisdom                3/10")
-            print ("Stealth               4/10")
-            print ("Luck                  6/10")
-            IO.print_dash()
-            break
-        elif selection == '4':
-            print ("       Assassin      ")
-            IO.print_dash()
-            print ("Strength              3/10")
-            print ("Defense               4/10")
-            print ("Range                 4/10")
-            print ("Wisdom                3/10")
-            print ("Stealth               8/10")
-            print ("Luck                  8/10")
-            IO.print_dash()
-            break
-        else:
-            print ("That was not a valid selection.")
-
-def display_skills():
-    print ("           Skills           ")
-    IO.print_dash()
-    print ("Strength:            \t   %s" % get_skill_level('strength'))
-    print ("Defense:             \t   %s" % get_skill_level('defense'))
-    print ("Accuracy:            \t   %s" % get_skill_level('accuracy'))
-    print ("Wisdom:              \t   %s" % get_skill_level('wisdom'))
-    print ("Stealth:             \t   %s" % get_skill_level('stealth'))
-    print ("Luck:                \t   %s" % get_skill_level('luck'))
-    IO.print_dash()
-    print ("Level:               \t   %s" % get_level())
-    print ("")
-
-def display_info():
-    print ("Name:               \t   %s\n" % character)
-    print ("Faction:            \t   %s\n" % faction)
-    print ("Character File:     \t   %s\n" % charFile)
-    print ("Inventory File:     \t   %s\n" % inventoryFile)
-    display_skills()
-    print ("Total XP:           \t   %s/%s\n" % (get_xp(), level_table[get_level_below() + 1]))
-    print ("Deaths:             \t   %s\n" % get_deaths())
-    print ("Stage:              \t   %s\n" % get_stage())
-    print ("Health:             \t   %s/%s\n" % (get_health(), get_max_health()))
-
-def create_wizard(filename):
-    f = open(filename, "a")
-    f.write("Level\n1\n")
-    f.write("Stats (in order - SDAWSL)\n")
-    f.write("2\n2\n8\n8\n5\n5\n")
-    f.write("Total XP\n0\n")
-    f.write("Deaths\n0\n")
-    f.write("Stage\n1\n")
-    f.write("Health\n100\n100\n")
-    f.write("Settings - TS\n0\n0\n")
-    f.close()
-
-def create_archer(filename):
-    f = open(filename, "a")
-    f.write("Level\n1\n")
-    f.write("Stats (in order - SDAWSL)\n")
-    f.write("2\n6\n8\n6\n6\n7\n")
-    f.write("Total XP\n0\n")
-    f.write("Deaths\n0\n")
-    f.write("Stage\n1\n")
-    f.write("Health\n100\n100\n")
-    f.write("Settings - TS\n0\n0\n")
-    f.close()
-
-def create_warrior(filename):
-    f = open(filename, "a")
-    f.write("Level\n1\n")
-    f.write("Stats (in order - SDAWSL)\n")
-    f.write("8\n7\n2\n3\n4\n6\n")
-    f.write("Total XP\n0\n")
-    f.write("Deaths\n0\n")
-    f.write("Stage\n1\n")
-    f.write("Health\n100\n100\n")
-    f.write("Settings - TS\n0\n0\n")
-    f.close()
-
-def create_assassin(filename):
-    f = open(filename, "a")
-    f.write("Level\n1\n")
-    f.write("Stats (in order - SDAWSL)\n")
-    f.write("3\n4\n4\n3\n8\n8\n")
-    f.write("Total XP\n0\n")
-    f.write("Deaths\n0\n")
-    f.write("Stage\n1\n")
-    f.write("Health\n100\n100\n")
-    f.write("Settings - TS\n0\n0\n")
-    f.close()
-
-def get_level():
-    output = 0
-    f = open(charFile, "r")
-    for i, line in enumerate(f):
-        if i == 3:
-            output = int(line[:-1])
-    f.close()
-    return output
-
-def get_skill_level(skill):
-    output = -1
-    f = open(charFile, "r")
-    for i, line in enumerate(f):
-        if i == 5 and skill == 'strength':
-            output = int(line[:-1])
-            break
-        elif i == 6 and skill == 'defense':
-            output = int(line[:-1])
-            break
-        elif i == 7 and skill == 'accuracy':
-            output = int(line[:-1])
-            break
-        elif i == 8 and skill == 'wisdom':
-            output = int(line[:-1])
-            break
-        elif i == 9 and skill == 'stealth':
-            output = int(line[:-1])
-            break
-        elif i == 10 and skill == 'luck':
-            output = int(line[:-1])
-            break
-        else:
-            output = -1
-    f.close()
-    return output
-
-def get_xp():
-    output = 0
-    f = open(charFile, "r")
-    for i, line in enumerate(f):
-        if i == 12:
-            output = int(line[:-1])
-    f.close()
-    return output
-
-def get_faction():
-    output = "none"
-    f = open(charFile, "r")
-    for i, line in enumerate(f):
-        if i == 1:
-            output = "%s" % line[:-1]
-    f.close()
-    return output
-
-def get_deaths():
-    output = 0
-    f = open(charFile, "r")
-    for i, line in enumerate(f):
-        if i == 14:
-            output = int(line[:-1])
-    f.close()
-    return output
-
-def get_stage():
-    output = 0
-    f = open(charFile, "r")
-    for i, line in enumerate(f):
-        if i == 16:
-            output = int(line[:-1])
-    f.close()
-    return output
-
-def get_health():
-    output = 0
-    f = open(charFile, "r")
-    for i, line in enumerate(f):
-        if i == 18:
-            output = int(line[:-1])
-    f.close()
-    return output
-
-def get_max_health():
-    output = 0
-    f = open(charFile, "r")
-    for i, line in enumerate(f):
-        if i == 19:
-            output = int(line[:-1])
-    f.close()
-    return output
-
 def add_xp(num):
     lines = open(charFile, 'r').readlines()
     temp = int(lines[12])
@@ -519,9 +186,9 @@ def died():
     out = open(charFile, 'w')
     out.writelines(lines)
     out.close()
-    add_xp((level_table[get_level_below()] - get_xp()))
+    add_xp((config.level_table[get_level_below()] - playerCharacter.get_xp()))
     update_level()
-    set_health(get_max_health())
+    set_health(playerCharacter.get_max_health())
 
     print ("Oh no! You have died!\nYou're XP is reset to the minimum for your level.\n")
 
@@ -551,76 +218,8 @@ def set_health(num):
     out.writelines(lines)
     out.close()
 
-def toggle_autotake():
-    global autotake
-
-    lines = open(charFile, 'r').readlines()
-    temp = int(lines[21])
-    if temp == 1:
-        temp = 0
-        autotake = 0
-    elif temp == 0:
-        temp = 1
-        autotake = 1
-
-    lines[21] = "%s\n" % temp
-    out = open(charFile, 'w')
-    out.writelines(lines)
-    out.close()
-
-def get_autotake():
-    output = 0
-    f = open(charFile, "r")
-    for i, line in enumerate(f):
-        if i == 21:
-            output = int(line[:-1])
-    f.close()
-    return output
-
-def set_autotake():
-    global autotake
-
-    if get_autotake() == 0:
-        autotake = 0
-    else:
-        autotake = 1
-
-def toggle_autosneak():
-    global autosneak
-
-    lines = open(charFile, 'r').readlines()
-    temp = int(lines[22])
-    if temp == 1:
-        temp = 0
-        autosneak = 0
-    elif temp == 0:
-        temp = 1
-        autosneak = 1
-
-    lines[22] = "%s\n" % temp
-    out = open(charFile, 'w')
-    out.writelines(lines)
-    out.close()
-
-def get_autosneak():
-    output = 0
-    f = open(charFile, "r")
-    for i, line in enumerate(f):
-        if i == 22:
-            output = int(line[:-1])
-    f.close()
-    return output
-
-def set_autosneak():
-    global autosneak
-
-    if get_autosneak() == 0:
-        autosneak = 0
-    else:
-        autosneak = 1
-
 def play_game():
-    if character == 'none':
+    if playerCharacter == 'none':
         select_character()
 
     global begin
