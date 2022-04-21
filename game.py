@@ -4,10 +4,6 @@ from select import select
 
 import character, config, environment, IO
 
-playerCharacter = "none"
-faction = "none"
-charFile = "none"
-inventoryFile = "none"
 skillPoints = 0
 first = True
 floorMap = []
@@ -42,12 +38,11 @@ def start():
         elif selection == '5' or selection == 'q':
             break
         elif selection == 'debug':
-            if playerCharacter == 'none':
+            if IO.playerCharacter == 'none':
                 character.select_character()
             debug_menu()
     else:
         print ("That was not a valid selection.\n")
-
 
 def debug_menu():
     while True:
@@ -79,10 +74,10 @@ def debug_menu():
                 else:
                     break
             print ("")
-            add_xp(num)
-            print ("Total XP now:            %s\n" % get_xp())
+            character.add_xp(num)
+            print ("Total XP now:            %s\n" % character.get_xp())
         elif selection2 == 'k':
-            died()
+            character.died()
         elif selection2 == 'm':
             while True:
                 try:
@@ -101,7 +96,7 @@ def debug_menu():
 
 
 def settings():
-    if playerCharacter == 'none':
+    if IO.playerCharacter == 'none':
         character.select_character()
     global autotake
     while True:
@@ -142,23 +137,23 @@ def settings():
                     print ("Removed %s.\n" % choice)
                     IO.print_dash()
         elif selection == 't':
-            print ("Would you like to change autotake? Currently set to %s. (y/n)" % get_autotake())
+            print ("Would you like to change autotake? Currently set to %s. (y/n)" % environment.get_autotake())
             choice = input("\n")
             print ("")
             if choice == 'y':
-                toggle_autotake()
-                print ("Autotake is now %s.\n" % get_autotake())
+                environment.toggle_autotake()
+                print ("Autotake is now %s.\n" % environment.get_autotake())
             elif choice == 'n':
                 print ("Returning to menu.\n")
             else:
                 print ("Invalid Selection.\n")
         elif selection == 's':
-            print ("Would you like to change autosneak? Currently set to %s. (y/n)" % get_autosneak())
+            print ("Would you like to change autosneak? Currently set to %s. (y/n)" % environment.get_autosneak())
             choice = input("\n")
             print ("")
             if choice == 'y':
-                toggle_autosneak()
-                print ("Autosneak is now %s.\n" % get_autosneak())
+                environment.toggle_autosneak()
+                print ("Autosneak is now %s.\n" % environment.get_autosneak())
             elif choice == 'n':
                 print ("Returning to menu.\n")
             else:
@@ -168,59 +163,9 @@ def settings():
         else:
             print ("Invalid Selection.\n")
 
-def add_xp(num):
-    lines = open(charFile, 'r').readlines()
-    temp = int(lines[12])
-    temp += num
-    lines[12] = "%s\n" % temp
-    out = open(charFile, 'w')
-    out.writelines(lines)
-    out.close()
-    update_level()
-
-def died():
-    lines = open(charFile, 'r').readlines()
-    temp = int(lines[14])
-    temp += 1
-    lines[14] = "%s\n" % temp
-    out = open(charFile, 'w')
-    out.writelines(lines)
-    out.close()
-    add_xp((config.level_table[get_level_below()] - playerCharacter.get_xp()))
-    update_level()
-    set_health(playerCharacter.get_max_health())
-
-    print ("Oh no! You have died!\nYou're XP is reset to the minimum for your level.\n")
-
-def add_stage():
-    lines = open(charFile, 'r').readlines()
-    temp = int(lines[16])
-    temp += 1
-    lines[16] = "%s\n" % temp
-    out = open(charFile, 'w')
-    out.writelines(lines)
-    out.close()
-
-def add_health():
-    lines = open(charFile, 'r').readlines()
-    temp = int(lines[19])
-    temp += 25
-    lines[19] = "%s\n" % temp
-    out = open(charFile, 'w')
-    out.writelines(lines)
-    out.close()
-
-def set_health(num):
-    lines = open(charFile, 'r').readlines()
-    temp = num
-    lines[18] = "%s\n" % temp
-    out = open(charFile, 'w')
-    out.writelines(lines)
-    out.close()
-
 def play_game():
-    if playerCharacter == 'none':
-        select_character()
+    if IO.playerCharacter == 'none':
+        IO.select_character()
 
     global begin
     global stop
@@ -235,7 +180,7 @@ def play_game():
         specific = False
 
         print ("What would you like to do?")
-        print ("Continue on to Labyrinth - Stage %s   \t 'c'" % get_stage())
+        print ("Continue on to Labyrinth - Stage %s   \t 'c'" % character.get_stage())
         print ("Enter a specific Labyrinth Stage      \t 'n'")
         print ("Enter the general store               \t 's'")
         print ("View my info/progression              \t 'i'")
@@ -246,13 +191,13 @@ def play_game():
 
         if selection == 'c':
             print ("What new foes may await?\n")
-            stage_num = get_stage()
+            stage_num = character.get_stage()
             play_stage = True
         elif selection == 'n':
             print ("What Stage would you like to enter?")
             stage_num = int(input("\n"))
             print ("")
-            if stage_num <= get_stage():
+            if stage_num <= character.get_stage():
                 play_stage = True
                 specific = True
             else:
@@ -260,7 +205,7 @@ def play_game():
         elif selection == 's':
             shop()
         elif selection == 'i':
-            display_info()
+            character.display_info()
             IO.print_dash()
         elif selection == 'q':
             break
@@ -272,7 +217,7 @@ def play_game():
 
             print ("You have entered the Labyrinth - Stage %s. Good luck...\n" % stage_num)
 
-            wisdom = get_skill_level('wisdom')
+            wisdom = character.character.get_skill_level('wisdom')
             chance = randint(0, wisdom * 3)
             direction = "none"
 
@@ -314,97 +259,97 @@ def play_game():
                     print ("You have escaped the Labyrinth!")
                     IO.print_dash(True)
                     if not specific:
-                        add_stage()
+                        character.add_stage()
                     if stage_num == 1:
                         print ("You are awarded 50 xp for this feat!\n")
-                        add_xp(50)
+                        character.add_xp(50)
                     elif stage_num == 2:
                         print ("You are awarded 100 xp for this feat!\n")
-                        add_xp(100)
+                        character.add_xp(100)
                     elif stage_num == 3:
                         print ("You are awarded 150 xp for this feat!\n")
-                        add_xp(150)
+                        character.add_xp(150)
                     elif stage_num == 4:
                         print ("You are awarded 250 xp for this feat!\n")
-                        add_xp(250)
+                        character.add_xp(250)
                     elif stage_num == 5:
                         print ("You are awarded 500 xp for this feat!\n")
-                        add_xp(500)
+                        character.add_xp(500)
                     elif stage_num == 6:
                         print ("You are awarded 750 xp for this feat!\n")
-                        add_xp(750)
+                        character.add_xp(750)
                     elif stage_num == 7:
                         print ("You are awarded 1000 xp for this feat!\n")
-                        add_xp(1000)
+                        character.add_xp(1000)
                     elif stage_num == 8:
                         print ("You are awarded 1500 xp for this feat!\n")
-                        add_xp(1500)
+                        character.add_xp(1500)
                     elif stage_num == 9:
                         print ("You are awarded 2000 xp for this feat!\n")
-                        add_xp(2000)
+                        character.add_xp(2000)
                     elif stage_num == 10:
                         print ("You are awarded 2500 xp for this feat!\n")
-                        add_xp(2500)
+                        character.add_xp(2500)
                     elif stage_num == 11:
                         print ("You are awarded 3000 xp for this feat!\n")
-                        add_xp(3000)
+                        character.add_xp(3000)
                     elif stage_num == 12:
                         print ("You are awarded 3500 xp for this feat!\n")
-                        add_xp(3500)
+                        character.add_xp(3500)
                     elif stage_num == 13:
                         print ("You are awarded 4000 xp for this feat!\n")
-                        add_xp(4000)
+                        character.add_xp(4000)
                     elif stage_num == 14:
                         print ("You are awarded 4500 xp for this feat!\n")
-                        add_xp(4500)
+                        character.add_xp(4500)
                     elif stage_num == 15:
                         print ("You are awarded 5000 xp for this feat!\n")
-                        add_xp(5000)
+                        character.add_xp(5000)
                     elif stage_num == 16:
                         print ("You are awarded 6000 xp for this feat!\n")
-                        add_xp(6000)
+                        character.add_xp(6000)
                     elif stage_num == 17:
                         print ("You are awarded 7000 xp for this feat!\n")
-                        add_xp(7000)
+                        character.add_xp(7000)
                     elif stage_num == 18:
                         print ("You are awarded 8000 xp for this feat!\n")
-                        add_xp(8000)
+                        character.add_xp(8000)
                     elif stage_num == 19:
                         print ("You are awarded 9000 xp for this feat!\n")
-                        add_xp(9000)
+                        character.add_xp(9000)
                     elif stage_num == 20:
                         print ("You are awarded 10000 xp for this feat!\n")
-                        add_xp(10000)
+                        character.add_xp(10000)
                     elif stage_num == 21:
                         print ("You are awarded 12500 xp for this feat!\n")
-                        add_xp(12500)
+                        character.add_xp(12500)
                     elif stage_num == 22:
                         print ("You are awarded 15000 xp for this feat!\n")
-                        add_xp(15000)
+                        character.add_xp(15000)
                     elif stage_num == 23:
                         print ("You are awarded 17500 xp for this feat!\n")
-                        add_xp(17500)
+                        character.add_xp(17500)
                     elif stage_num == 24:
                         print ("You are awarded 20000 xp for this feat!\n")
-                        add_xp(20000)
+                        character.add_xp(20000)
                     elif stage_num == 25:
                         print ("You are awarded 22500 xp for this feat!\n")
-                        add_xp(22500)
+                        character.add_xp(22500)
                     elif stage_num == 26:
                         print ("You are awarded 25000 xp for this feat!\n")
-                        add_xp(25000)
+                        character.add_xp(25000)
                     elif stage_num == 27:
                         print ("You are awarded 30000 xp for this feat!\n")
-                        add_xp(30000)
+                        character.add_xp(30000)
                     elif stage_num == 28:
                         print ("You are awarded 35000 xp for this feat!\n")
-                        add_xp(35000)
+                        character.add_xp(35000)
                     elif stage_num == 29:
                         print ("You are awarded 40000 xp for this feat!\n")
-                        add_xp(40000)
+                        character.add_xp(40000)
                     elif stage_num == 30:
                         print ("You are awarded 50000 xp for this feat!\n")
-                        add_xp(50000)
+                        character.add_xp(50000)
                     break
 
                 print ("What would you like to do?")
@@ -417,9 +362,7 @@ def play_game():
 
                 if selection == 'm':
                     moved = move()
-                    if not moved:
-                        pass
-                    else:
+                    if moved:
                         progress(stage_num)
                 elif selection == 'h':
                     heal()
@@ -558,27 +501,26 @@ def progress(stage_num):
                         print ("Invalid Selection.")
                     count += 1
 
-
 def battle(stage_num):
     global youDied
-    max_damage = get_skill_level('strength') * 2
-    max_defense = get_skill_level('defense') * 2
-    accuracy = get_skill_level('accuracy') * 2
-    luck = get_skill_level('luck')
+    max_damage = character.get_skill_level('strength') * 2
+    max_defense = character.get_skill_level('defense') * 2
+    accuracy = character.get_skill_level('accuracy') * 2
+    luck = character.get_skill_level('luck')
 
     turn = randint(1, 2)
     fled = False
 
     while True:
-        opponent = random.choice(enemy_table.keys())
-        if enemy_table[opponent][0] <= stage_num:
-            if enemy_table[opponent][0] > stage_num - 5:
+        opponent = random.choice(config.enemy_table.keys())
+        if config.enemy_table[opponent][0] <= stage_num:
+            if config.enemy_table[opponent][0] > stage_num - 5:
                 break
 
-    stats = enemy_table[opponent]
+    stats = config.enemy_table[opponent]
 
     print ("You've entered battle with a %s.\n" % opponent)
-    health = get_health()
+    health = character.get_health()
     enemy_health = stats[2]
     enemy_max_damage = stats[3]
 
@@ -588,11 +530,11 @@ def battle(stage_num):
     while True:
         if health <= 0:
             youDied = True
-            died()
+            character.died()
             break
         if enemy_health <= 0:
             print ("You have killed it!\n")
-            add_xp(stats[1])
+            character.add_xp(stats[1])
 
             print ("It appears the enemy dropped an item before disappearing into nothing.\n")
             if randint(0, 1) == 1:
@@ -603,8 +545,8 @@ def battle(stage_num):
                 if not found:
                     print ("Turns out it was nothing...\n")
 
-            level = get_level()
-            print ("Your current XP is %s of %s to level %s.\n" % (get_xp(), level_table[level + 1], level + 1))
+            level = character.get_level()
+            print ("Your current XP is %s of %s to level %s.\n" % (character.get_xp(), config.level_table[level + 1], level + 1))
             break
         if turn == 1:
             while True:
@@ -640,7 +582,7 @@ def battle(stage_num):
                     break
                 elif choice == 'f':
                     print ("You attempt to flee!\n")
-                    if randint(get_skill_level('stealth') / 2, get_skill_level('stealth')) > randint(0, stage_num * 2):
+                    if randint(character.get_skill_level('stealth') / 2, character.get_skill_level('stealth')) > randint(0, stage_num * 2):
                         print ("You get away safely...\n")
                         fled = True
                     else:
@@ -664,7 +606,7 @@ def battle(stage_num):
                     damage = randint(1, enemy_max_damage)
                 print ("The %s deals %s damage!\n" % (opponent, damage))
                 health -= damage
-                set_health(health)
+                character.set_health(health)
 
             select([sys.stdin], [], [], 1)
 
@@ -672,28 +614,28 @@ def battle(stage_num):
             turn = 1
 
 def find_item(stage_num):
-    randy = randint(0, get_skill_level('luck'))
+    randy = randint(0, character.get_skill_level('luck'))
     chance = randint(1, 3)
 
     if chance > 2:
         if randy > 75 and stage_num > 25:
-            item, values = random.choice(list(item_table9.items()))
+            item, values = random.choice(list(config.item_table9.items()))
         elif randy > 50 and stage_num > 20:
-            item, values = random.choice(list(item_table8.items()))
+            item, values = random.choice(list(config.item_table8.items()))
         elif randy > 45 and stage_num > 16:
-            item, values = random.choice(list(item_table7.items()))
+            item, values = random.choice(list(config.item_table7.items()))
         elif randy > 35 and stage_num > 12:
-            item, values = random.choice(list(item_table6.items()))
+            item, values = random.choice(list(config.item_table6.items()))
         elif randy > 25 and stage_num > 8:
-            item, values = random.choice(list(item_table5.items()))
+            item, values = random.choice(list(config.item_table5.items()))
         elif randy > 15 and stage_num > 4:
-            item, values = random.choice(list(item_table4.items()))
+            item, values = random.choice(list(config.item_table4.items()))
         elif randy > 10 and stage_num > 3:
-            item, values = random.choice(list(item_table3.items()))
+            item, values = random.choice(list(config.item_table3.items()))
         elif randy > 5 and stage_num > 2:
-            item, values = random.choice(list(item_table2.items()))
+            item, values = random.choice(list(config.item_table2.items()))
         elif randy > 3 and stage_num > 1:
-            item, values = random.choice(list(item_table1.items()))
+            item, values = random.choice(list(config.item_table1.items()))
         else:
             return False
 
@@ -733,7 +675,7 @@ def sneak(stage_num):
     quiet = randint(1, 3)
     blind_luck = randint(0, 10)
 
-    if (get_skill_level('stealth') > randy and quiet >= 2) or blind_luck > 9:
+    if (character.get_skill_level('stealth') > randy and quiet >= 2) or blind_luck > 9:
         return True
     else:
         return False
@@ -753,7 +695,7 @@ def heal():
                 print ("Little   - %s\t      '1'" % has_item('Little Potion'))
             if has_item('Small Potion') >= 0:
                 print ("Small    - %s\t      '2'" % has_item('Small Potion'))
-            if has_item('Ragular Potion') >= 0:
+            if has_item('Regular Potion') >= 0:
                 print ("Regular  - %s\t      '3'" % has_item('Regular Potion'))
             if has_item('Big Potion') >= 0:
                 print ("Big      - %s\t      '4'" % has_item('Big Potion'))
@@ -810,21 +752,19 @@ def heal():
             else:
                 print ("Invalid Selection.")
 
-        if num == 0:
-            pass
-        else:
-            lines = open(charFile, 'r').readlines()
+        if num != 0:
+            lines = open(IO.charFile, 'r').readlines()
             temp = int(lines[18])
-            if temp + num > get_max_health():
-                temp = get_max_health()
+            if temp + num > character.get_max_health():
+                temp = character.get_max_health()
             else:
                 temp += num
             print ("You healed %s health points.\n" % num)
             lines[18] = "%s\n" % temp
-            out = open(charFile, 'w')
+            out = open(IO.charFile, 'w')
             out.writelines(lines)
             out.close()
-            print ("You now have %s health.\n" % get_health())
+            print ("You now have %s health.\n" % character.get_health())
 
 
 def shop():
@@ -844,7 +784,7 @@ def shop():
         if selection == 's':
             while True:
                 print ("What would you like to sell?")
-                f = open(inventoryFile, 'r')
+                f = open(IO.inventoryFile, 'r')
                 for i, line in enumerate(f):
                     if i > 1:
                         spot = line.index(':')
@@ -871,7 +811,7 @@ def shop():
                 elif has_item(item) > 1:
                     while True:
                         print ("How many would you like to sell? You have %s. 'q' to quit." % has_item(item))
-                        num = int(input("\n"))
+                        num = int(input("\n")) if num != 'q' else 'q'
                         print ("")
 
                         if num > has_item(item):
@@ -894,7 +834,7 @@ def shop():
             print ("We have lots to offer!\n")
             while True:
                 print ("What would you like to buy?\n")
-                offer_items(get_stage())
+                offer_items(character.get_stage())
 
                 print ("To quit                  'q'")
                 print ("You have %s gold." % has_item('Gold Piece'))
@@ -906,7 +846,7 @@ def shop():
 
                 if item == 'q':
                     break
-                elif not cost > 0:
+                elif cost <= 0:
                     print ("That is not an item for sale.\n")
                 elif cost > 0:
                     print ("You bought a %s for %s gold.\n" % (item, cost))
@@ -919,7 +859,6 @@ def shop():
             break
         else:
             print ("Invalid selection.\n")
-
 
 def offer_items(stage_num):
     print ("Tiny Potion \t-\t %s gold" % int(get_cost('Tiny Potion')*1.2))
@@ -944,112 +883,6 @@ def offer_items(stage_num):
     if stage_num >= 30:
         print ("Legendary Potion \t-\t %s gold" % int(get_cost('Legendary Potion')*1.2))
     print ("")
-
-
-def level_up():
-    global first
-    if skillPoints == 1 and first:
-        print ("\nCongratulations! You have leveled up!\n")
-        first = False
-    elif skillPoints == 2 and first:
-        print ("\nCongratulations! You have leveled up twice!\n")
-        first = False
-    elif skillPoints == 3 and first:
-        print ("\nCongratulations! You have leveled up thrice!\n")
-        first = False
-    elif skillPoints == 4 and first:
-        print ("\nCongratulations! You have leveled up four times!\n")
-        first = False
-    elif first:
-        print ("\nCongratulations! You have leveled up A LOT!\n")
-        first = False
-    display_skills()
-    while True:
-        print ("Skills remaining to level: %s\n\n" % skillPoints)
-
-        print ("Which level would you like to upgrade?")
-        IO.print_dash()
-        print ("For Strength           's'")
-        print ("For Defense            'd'")
-        print ("For Accuracy           'a'")
-        print ("For Widsom             'w'")
-        print ("For Stealth            't'")
-        print ("For Luck               'l'")
-
-        skill = input("\n")
-        skill = skill.lower()
-        IO.print_dash(True)
-
-        if skill == 's':
-            skill = 1
-            print ("Leveled up Strength!\n")
-            break
-        elif skill == 'd':
-            skill = 2
-            print ("Leveled up Defense!\n")
-            break
-        elif skill == 'a':
-            skill = 3
-            print ("Leveled up Accuracy!\n")
-            break
-        elif skill == 'w':
-            skill = 4
-            print ("Leveled up Wisdom!\n")
-            break
-        elif skill == 't':
-            skill = 5
-            print ("Leveled up Stealth!\n")
-            break
-        elif skill == 'l':
-            skill = 6
-            print ("Leveled up Luck!\n")
-            break
-        else:
-            print ("Invalid Selection.\n")
-
-    lines = open(charFile, 'r').readlines()
-    temp = int(lines[skill + 4])
-    temp += 1
-    temp = str(temp)
-    lines[skill + 4] = "%s\n" % temp
-    out = open(charFile, 'w')
-    out.writelines(lines)
-    out.close()
-
-    add_health()
-    set_health(get_max_health())
-
-def update_level():
-    global skillPoints
-    global first
-    first = True
-    new_level = get_level()
-
-    for i in level_table:
-        if get_xp() >= level_table[i]:
-            new_level = i
-
-    skillPoints = new_level - get_level()
-
-    while True:
-        if skillPoints == 0:
-            break
-        else:
-            lines = open(charFile, 'r').readlines()
-            temp = int(new_level)
-            lines[3] = "%s\n" % temp
-            out = open(charFile, 'w')
-            out.writelines(lines)
-            out.close()
-            level_up()
-            skillPoints -= 1
-
-def get_level_below():
-    level_below = 0
-    for i in level_table:
-        if get_xp() >= level_table[i]:
-            level_below = i
-    return level_below
 
 def generate_floor(num):
     global floorMap

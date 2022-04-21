@@ -1,3 +1,10 @@
+import character, config
+
+playerCharacter = "none"
+faction = "none"
+charFile = "none"
+inventoryFile = "none"
+
 def print_dash(skip=False):
     if skip:
         print ("------------------------------\n")
@@ -66,14 +73,14 @@ def display_faction_stats():
 def display_skills():
     print ("           Skills           ")
     print_dash()
-    print ("Strength:            \t   %s" % get_skill_level('strength'))
-    print ("Defense:             \t   %s" % get_skill_level('defense'))
-    print ("Accuracy:            \t   %s" % get_skill_level('accuracy'))
-    print ("Wisdom:              \t   %s" % get_skill_level('wisdom'))
-    print ("Stealth:             \t   %s" % get_skill_level('stealth'))
-    print ("Luck:                \t   %s" % get_skill_level('luck'))
+    print ("Strength:            \t   %s" % character.get_skill_level('strength'))
+    print ("Defense:             \t   %s" % character.get_skill_level('defense'))
+    print ("Accuracy:            \t   %s" % character.get_skill_level('accuracy'))
+    print ("Wisdom:              \t   %s" % character.get_skill_level('wisdom'))
+    print ("Stealth:             \t   %s" % character.get_skill_level('stealth'))
+    print ("Luck:                \t   %s" % character.get_skill_level('luck'))
     print_dash()
-    print ("Level:               \t   %s" % get_level())
+    print ("Level:               \t   %s" % character.get_level())
     print ("")
 
 def display_info():
@@ -82,7 +89,7 @@ def display_info():
     print ("Character File:     \t   %s\n" % charFile)
     print ("Inventory File:     \t   %s\n" % inventoryFile)
     display_skills()
-    print ("Total XP:           \t   %s/%s\n" % (get_xp(), level_table[get_level_below() + 1]))
-    print ("Deaths:             \t   %s\n" % get_deaths())
-    print ("Stage:              \t   %s\n" % get_stage())
-    print ("Health:             \t   %s/%s\n" % (get_health(), get_max_health()))
+    print ("Total XP:           \t   %s/%s\n" % (character.get_xp(), config.level_table[get_level_below() + 1]))
+    print ("Deaths:             \t   %s\n" % character.get_deaths())
+    print ("Stage:              \t   %s\n" % character.get_stage())
+    print ("Health:             \t   %s/%s\n" % (character.get_health(), character.get_max_health()))

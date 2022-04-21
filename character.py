@@ -1,5 +1,5 @@
 import os
-import IO
+import config, environment, IO
 
 def create_character():
     print ("New Character Creation")
@@ -108,8 +108,8 @@ def select_character():
             charFile = "characters/%s.txt" % choice
             inventoryFile = "inventories/%s.inv" % choice
             faction = get_faction()
-            set_autotake()
-            set_autosneak()
+            environment.set_autotake()
+            environment.set_autosneak()
 
             break
 
@@ -174,24 +174,14 @@ def get_skill_level(skill):
     output = -1
     f = open(charFile, "r")
     for i, line in enumerate(f):
-        if i == 5 and skill == 'strength':
-            output = int(line[:-1])
-            break
-        elif i == 6 and skill == 'defense':
-            output = int(line[:-1])
-            break
-        elif i == 7 and skill == 'accuracy':
-            output = int(line[:-1])
-            break
-        elif i == 8 and skill == 'wisdom':
-            output = int(line[:-1])
-            break
-        elif i == 9 and skill == 'stealth':
-            output = int(line[:-1])
-            break
-        elif i == 10 and skill == 'luck':
-            output = int(line[:-1])
-            break
+        if  i ==  5 and skill == 'strength' or \
+            i ==  6 and skill == 'defense'  or \
+            i ==  7 and skill == 'accuracy' or \
+            i ==  8 and skill == 'wisdom'   or \
+            i ==  9 and skill == 'stealth'  or \
+            i == 10 and skill == 'luck':
+                output = int(line[:-1])
+                break
         else:
             output = -1
     f.close()
@@ -250,3 +240,158 @@ def get_max_health():
             output = int(line[:-1])
     f.close()
     return output
+
+def add_xp(num):
+    lines = open(IO.charFile, 'r').readlines()
+    temp = int(lines[12])
+    temp += num
+    lines[12] = "%s\n" % temp
+    out = open(IO.charFile, 'w')
+    out.writelines(lines)
+    out.close()
+    update_level()
+
+def died():
+    lines = open(IO.charFile, 'r').readlines()
+    temp = int(lines[14])
+    temp += 1
+    lines[14] = "%s\n" % temp
+    out = open(IO.charFile, 'w')
+    out.writelines(lines)
+    out.close()
+    add_xp((config.level_table[character.get_level_below()] - IO.playerCharacter.get_xp()))
+    update_level()
+    set_health(IO.playerCharacter.get_max_health())
+
+    print ("Oh no! You have died!\nYou're XP is reset to the minimum for your level.\n")
+
+def add_stage():
+    lines = open(IO.charFile, 'r').readlines()
+    temp = int(lines[16])
+    temp += 1
+    lines[16] = "%s\n" % temp
+    out = open(IO.charFile, 'w')
+    out.writelines(lines)
+    out.close()
+
+def add_health():
+    lines = open(IO.charFile, 'r').readlines()
+    temp = int(lines[19])
+    temp += 25
+    lines[19] = "%s\n" % temp
+    out = open(IO.charFile, 'w')
+    out.writelines(lines)
+    out.close()
+
+def set_health(num):
+    lines = open(IO.charFile, 'r').readlines()
+    temp = num
+    lines[18] = "%s\n" % temp
+    out = open(IO.charFile, 'w')
+    out.writelines(lines)
+    out.close()
+
+def level_up():
+    global first
+    if skillPoints == 1 and first:
+        print ("\nCongratulations! You have leveled up!\n")
+        first = False
+    elif skillPoints == 2 and first:
+        print ("\nCongratulations! You have leveled up twice!\n")
+        first = False
+    elif skillPoints == 3 and first:
+        print ("\nCongratulations! You have leveled up thrice!\n")
+        first = False
+    elif skillPoints == 4 and first:
+        print ("\nCongratulations! You have leveled up four times!\n")
+        first = False
+    elif first:
+        print ("\nCongratulations! You have leveled up A LOT!\n")
+        first = False
+    IO.display_skills()
+    while True:
+        print ("Skills remaining to level: %s\n\n" % skillPoints)
+
+        print ("Which level would you like to upgrade?")
+        IO.print_dash()
+        print ("For Strength           's'")
+        print ("For Defense            'd'")
+        print ("For Accuracy           'a'")
+        print ("For Widsom             'w'")
+        print ("For Stealth            't'")
+        print ("For Luck               'l'")
+
+        skill = input("\n")
+        skill = skill.lower()
+        IO.print_dash(True)
+
+        if skill == 's':
+            skill = 1
+            print ("Leveled up Strength!\n")
+            break
+        elif skill == 'd':
+            skill = 2
+            print ("Leveled up Defense!\n")
+            break
+        elif skill == 'a':
+            skill = 3
+            print ("Leveled up Accuracy!\n")
+            break
+        elif skill == 'w':
+            skill = 4
+            print ("Leveled up Wisdom!\n")
+            break
+        elif skill == 't':
+            skill = 5
+            print ("Leveled up Stealth!\n")
+            break
+        elif skill == 'l':
+            skill = 6
+            print ("Leveled up Luck!\n")
+            break
+        else:
+            print ("Invalid Selection.\n")
+
+    lines = open(charFile, 'r').readlines()
+    temp = int(lines[skill + 4])
+    temp += 1
+    temp = str(temp)
+    lines[skill + 4] = "%s\n" % temp
+    out = open(charFile, 'w')
+    out.writelines(lines)
+    out.close()
+
+    add_health()
+    set_health(get_max_health())
+
+def update_level():
+    global skillPoints
+    global first
+    first = True
+    new_level = get_level()
+
+    for i in config.level_table:
+        if get_xp() >= config.level_table[i]:
+            new_level = i
+
+    skillPoints = new_level - get_level()
+
+    while True:
+        if skillPoints == 0:
+            break
+        else:
+            lines = open(charFile, 'r').readlines()
+            temp = int(new_level)
+            lines[3] = "%s\n" % temp
+            out = open(charFile, 'w')
+            out.writelines(lines)
+            out.close()
+            level_up()
+            skillPoints -= 1
+
+def get_level_below():
+    level_below = 0
+    for i in config.level_table:
+        if get_xp() >= config.level_table[i]:
+            level_below = i
+    return level_below
