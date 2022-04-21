@@ -1,4 +1,6 @@
 import os
+import IO
+from random import randint
 
 def setupDirectories():
     workingDir = "Dungeon/Game/"
@@ -10,7 +12,7 @@ def setupDirectories():
 def toggle_autotake():
     global autotake
 
-    lines = open(charFile, 'r').readlines()
+    lines = open(IO.charFile, 'r').readlines()
     temp = int(lines[21])
     if temp == 1:
         temp = 0
@@ -20,13 +22,13 @@ def toggle_autotake():
         autotake = 1
 
     lines[21] = "%s\n" % temp
-    out = open(charFile, 'w')
+    out = open(IO.charFile, 'w')
     out.writelines(lines)
     out.close()
 
 def get_autotake():
     output = 0
-    f = open(charFile, "r")
+    f = open(IO.charFile, "r")
     for i, line in enumerate(f):
         if i == 21:
             output = int(line[:-1])
@@ -44,7 +46,7 @@ def set_autotake():
 def toggle_autosneak():
     global autosneak
 
-    lines = open(charFile, 'r').readlines()
+    lines = open(IO.charFile, 'r').readlines()
     temp = int(lines[22])
     if temp == 1:
         temp = 0
@@ -54,13 +56,13 @@ def toggle_autosneak():
         autosneak = 1
 
     lines[22] = "%s\n" % temp
-    out = open(charFile, 'w')
+    out = open(IO.charFile, 'w')
     out.writelines(lines)
     out.close()
 
 def get_autosneak():
     output = 0
-    f = open(charFile, "r")
+    f = open(IO.charFile, "r")
     for i, line in enumerate(f):
         if i == 22:
             output = int(line[:-1])
@@ -74,3 +76,43 @@ def set_autosneak():
         autosneak = 0
     else:
         autosneak = 1
+
+def generate_floor(num):
+    global floorMap
+    global begin
+    global stop
+    global current
+
+    num = (num / 3) + 2
+    floorMap = [[0] * num for _ in range(num)]
+
+    startX = randint(0, num - 1)
+    startY = randint(0, num - 1)
+
+    while True:
+        exitX = randint(0, num - 1)
+        exitY = randint(0, num - 1)
+        if exitX != startX or exitY != startY:
+            break
+
+    begin = [startX, startY]
+    current = [startX, startY]
+    stop = [exitX, exitY]
+
+def print_floor():
+    global floorMap
+    print ("")
+    for x in range(len(floorMap)):
+        for y in range(len(floorMap)):
+            if x == current[0] and y == current[1]:
+                print ('O')
+            elif x == stop[0] and y == stop[1]:
+                print ('X')
+            else:
+                print ('{}'.format(floorMap[x][y]))
+        print ()
+    IO.print_dash(True)
+
+    print ("Current: %s" % current)
+    print ("Start: %s" % begin)
+    print ("Exit: %s\n" % stop)

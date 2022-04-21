@@ -259,7 +259,7 @@ def died():
     out = open(IO.charFile, 'w')
     out.writelines(lines)
     out.close()
-    add_xp((config.level_table[character.get_level_below()] - IO.playerCharacter.get_xp()))
+    add_xp((config.level_table[get_level_below()] - IO.playerCharacter.get_xp()))
     update_level()
     set_health(IO.playerCharacter.get_max_health())
 
@@ -317,7 +317,7 @@ def level_up():
         print ("For Strength           's'")
         print ("For Defense            'd'")
         print ("For Accuracy           'a'")
-        print ("For Widsom             'w'")
+        print ("For Wisdom             'w'")
         print ("For Stealth            't'")
         print ("For Luck               'l'")
 
@@ -395,3 +395,89 @@ def get_level_below():
         if get_xp() >= config.level_table[i]:
             level_below = i
     return level_below
+
+def heal():
+    if get_max_health() == get_health():
+        print ("You are already at full health.\n")
+    else:
+        while True:
+            print ("What type of potion would you like to use?")
+
+            print ("Potion   - Quantity")
+
+            if has_item('Tiny Potion') >= 0:
+                print ("Tiny     - %s\t      '0'" % has_item('Tiny Potion'))
+            if has_item('Little Potion') >= 0:
+                print ("Little   - %s\t      '1'" % has_item('Little Potion'))
+            if has_item('Small Potion') >= 0:
+                print ("Small    - %s\t      '2'" % has_item('Small Potion'))
+            if has_item('Regular Potion') >= 0:
+                print ("Regular  - %s\t      '3'" % has_item('Regular Potion'))
+            if has_item('Big Potion') >= 0:
+                print ("Big      - %s\t      '4'" % has_item('Big Potion'))
+            if has_item('Large Potion') >= 0:
+                print ("Large    - %s\t      '5'" % has_item('Large Potion'))
+            if has_item('Huge Potion') >= 0:
+                print ("Huge     - %s\t      '6'" % has_item('Huge Potion'))
+            if has_item('Gigantic Potion') >= 0:
+                print ("Gigantic - %s\t      '7'" % has_item('Gigantic Potion'))
+            if has_item('Epic Potion') >= 0:
+                print ("Epic     - %s\t      '8'" % has_item('Epic Potion'))
+
+            print ("To cancel             'q'")
+
+            potion = int(input("\n"))
+            print ("")
+
+            if potion == 0:
+                num = 10
+                remove_item('Tiny Potion')
+                break
+            elif potion == 1:
+                num = 25
+                remove_item('Little Potion')
+                break
+            elif potion == 2:
+                num = 50
+                remove_item('Small Potion')
+                break
+            elif potion == 3:
+                num = 100
+                remove_item('Regular Potion')
+                break
+            elif potion == 4:
+                num = 150
+                remove_item('Big Potion')
+                break
+            elif potion == 5:
+                num = 200
+                remove_item('Large Potion')
+                break
+            elif potion == 6:
+                num = 300
+                remove_item('Huge Potion')
+                break
+            elif potion == 7:
+                num = 500
+                remove_item('Gigantic Potion')
+                break
+            elif potion == 8:
+                num = 1000
+                remove_item('Epic Potion')
+                break
+            else:
+                print ("Invalid Selection.")
+
+        if num != 0:
+            lines = open(IO.charFile, 'r').readlines()
+            temp = int(lines[18])
+            if temp + num > get_max_health():
+                temp = get_max_health()
+            else:
+                temp += num
+            print ("You healed %s health points.\n" % num)
+            lines[18] = "%s\n" % temp
+            out = open(IO.charFile, 'w')
+            out.writelines(lines)
+            out.close()
+            print ("You now have %s health.\n" % get_health())
