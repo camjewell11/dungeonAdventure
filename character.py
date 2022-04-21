@@ -1,5 +1,5 @@
 import os
-import config, environment, IO
+import config, environment, inventoryManagement, IO
 
 def create_character():
     print ("New Character Creation")
@@ -9,10 +9,6 @@ def create_character():
         name = input("Enter your name: ")
         IO.print_dash()
         filename = "characters/" + name + ".txt"
-        global playerCharacter
-        global charFile
-        global inventoryFile
-        global faction
 
         if os.path.isfile(filename):
             print ("Character already exists.")
@@ -64,7 +60,7 @@ def create_character():
             IO.print_dash(True)
 
         playerCharacter = name
-        charFile = filename
+        IO.charFile = filename
         inventoryFile = "inventories/" + playerCharacter + ".inv"
 
         f = open(inventoryFile, "w")
@@ -78,6 +74,7 @@ def select_character():
     chars = os.listdir("characters")
     print ("Which Character would you like to play as?")
     spot = 0
+    chars.remove(".gitkeep")
     for i in chars:
         chars[spot] = i[:-4]
         print ("- %s" % chars[spot])
@@ -99,15 +96,10 @@ def select_character():
             print ("\nNow playing as %s." % choice)
             IO.print_dash(True)
 
-            global playerCharacter
-            global charFile
-            global inventoryFile
-            global faction
-
-            playerCharacter = choice
-            charFile = "characters/%s.txt" % choice
-            inventoryFile = "inventories/%s.inv" % choice
-            faction = get_faction()
+            IO.playerCharacter = choice
+            IO.charFile = "characters/%s.txt" % choice
+            IO.inventoryFile = "inventories/%s.inv" % choice
+            IO.faction = get_faction()
             environment.set_autotake()
             environment.set_autosneak()
 
@@ -163,7 +155,7 @@ def create_assassin(filename):
 
 def get_level():
     output = 0
-    f = open(charFile, "r")
+    f = open(IO.charFile, "r")
     for i, line in enumerate(f):
         if i == 3:
             output = int(line[:-1])
@@ -172,7 +164,7 @@ def get_level():
 
 def get_skill_level(skill):
     output = -1
-    f = open(charFile, "r")
+    f = open(IO.charFile, "r")
     for i, line in enumerate(f):
         if  i ==  5 and skill == 'strength' or \
             i ==  6 and skill == 'defense'  or \
@@ -189,7 +181,7 @@ def get_skill_level(skill):
 
 def get_xp():
     output = 0
-    f = open(charFile, "r")
+    f = open(IO.charFile, "r")
     for i, line in enumerate(f):
         if i == 12:
             output = int(line[:-1])
@@ -198,7 +190,7 @@ def get_xp():
 
 def get_faction():
     output = "none"
-    f = open(charFile, "r")
+    f = open(IO.charFile, "r")
     for i, line in enumerate(f):
         if i == 1:
             output = "%s" % line[:-1]
@@ -207,7 +199,7 @@ def get_faction():
 
 def get_deaths():
     output = 0
-    f = open(charFile, "r")
+    f = open(IO.charFile, "r")
     for i, line in enumerate(f):
         if i == 14:
             output = int(line[:-1])
@@ -216,7 +208,7 @@ def get_deaths():
 
 def get_stage():
     output = 0
-    f = open(charFile, "r")
+    f = open(IO.charFile, "r")
     for i, line in enumerate(f):
         if i == 16:
             output = int(line[:-1])
@@ -225,7 +217,7 @@ def get_stage():
 
 def get_health():
     output = 0
-    f = open(charFile, "r")
+    f = open(IO.charFile, "r")
     for i, line in enumerate(f):
         if i == 18:
             output = int(line[:-1])
@@ -234,7 +226,7 @@ def get_health():
 
 def get_max_health():
     output = 0
-    f = open(charFile, "r")
+    f = open(IO.charFile, "r")
     for i, line in enumerate(f):
         if i == 19:
             output = int(line[:-1])
@@ -292,25 +284,24 @@ def set_health(num):
     out.close()
 
 def level_up():
-    global first
-    if skillPoints == 1 and first:
+    if environment.skillPoints == 1 and IO.first:
         print ("\nCongratulations! You have leveled up!\n")
-        first = False
-    elif skillPoints == 2 and first:
+        IO.first = False
+    elif environment.skillPoints == 2 and IO.first:
         print ("\nCongratulations! You have leveled up twice!\n")
-        first = False
-    elif skillPoints == 3 and first:
+        IO.first = False
+    elif environment.skillPoints == 3 and IO.first:
         print ("\nCongratulations! You have leveled up thrice!\n")
-        first = False
-    elif skillPoints == 4 and first:
+        IO.first = False
+    elif environment.skillPoints == 4 and IO.first:
         print ("\nCongratulations! You have leveled up four times!\n")
-        first = False
-    elif first:
+        IO.first = False
+    elif IO.first:
         print ("\nCongratulations! You have leveled up A LOT!\n")
-        first = False
+        IO.first = False
     IO.display_skills()
     while True:
-        print ("Skills remaining to level: %s\n\n" % skillPoints)
+        print ("Skills remaining to level: %s\n\n" % environment.skillPoints)
 
         print ("Which level would you like to upgrade?")
         IO.print_dash()
@@ -352,12 +343,12 @@ def level_up():
         else:
             print ("Invalid Selection.\n")
 
-    lines = open(charFile, 'r').readlines()
+    lines = open(IO.charFile, 'r').readlines()
     temp = int(lines[skill + 4])
     temp += 1
     temp = str(temp)
     lines[skill + 4] = "%s\n" % temp
-    out = open(charFile, 'w')
+    out = open(IO.charFile, 'w')
     out.writelines(lines)
     out.close()
 
@@ -365,29 +356,27 @@ def level_up():
     set_health(get_max_health())
 
 def update_level():
-    global skillPoints
-    global first
-    first = True
+    IO.first = True
     new_level = get_level()
 
     for i in config.level_table:
         if get_xp() >= config.level_table[i]:
             new_level = i
 
-    skillPoints = new_level - get_level()
+    environment.skillPoints = new_level - get_level()
 
     while True:
-        if skillPoints == 0:
+        if environment.skillPoints == 0:
             break
         else:
-            lines = open(charFile, 'r').readlines()
+            lines = open(IO.charFile, 'r').readlines()
             temp = int(new_level)
             lines[3] = "%s\n" % temp
-            out = open(charFile, 'w')
+            out = open(IO.charFile, 'w')
             out.writelines(lines)
             out.close()
             level_up()
-            skillPoints -= 1
+            environment.skillPoints -= 1
 
 def get_level_below():
     level_below = 0
@@ -405,24 +394,24 @@ def heal():
 
             print ("Potion   - Quantity")
 
-            if has_item('Tiny Potion') >= 0:
-                print ("Tiny     - %s\t      '0'" % has_item('Tiny Potion'))
-            if has_item('Little Potion') >= 0:
-                print ("Little   - %s\t      '1'" % has_item('Little Potion'))
-            if has_item('Small Potion') >= 0:
-                print ("Small    - %s\t      '2'" % has_item('Small Potion'))
-            if has_item('Regular Potion') >= 0:
-                print ("Regular  - %s\t      '3'" % has_item('Regular Potion'))
-            if has_item('Big Potion') >= 0:
-                print ("Big      - %s\t      '4'" % has_item('Big Potion'))
-            if has_item('Large Potion') >= 0:
-                print ("Large    - %s\t      '5'" % has_item('Large Potion'))
-            if has_item('Huge Potion') >= 0:
-                print ("Huge     - %s\t      '6'" % has_item('Huge Potion'))
-            if has_item('Gigantic Potion') >= 0:
-                print ("Gigantic - %s\t      '7'" % has_item('Gigantic Potion'))
-            if has_item('Epic Potion') >= 0:
-                print ("Epic     - %s\t      '8'" % has_item('Epic Potion'))
+            if inventoryManagement.has_item('Tiny Potion') >= 0:
+                print ("Tiny     - %s\t      '0'" % inventoryManagement.has_item('Tiny Potion'))
+            if inventoryManagement.has_item('Little Potion') >= 0:
+                print ("Little   - %s\t      '1'" % inventoryManagement.has_item('Little Potion'))
+            if inventoryManagement.has_item('Small Potion') >= 0:
+                print ("Small    - %s\t      '2'" % inventoryManagement.has_item('Small Potion'))
+            if inventoryManagement.has_item('Regular Potion') >= 0:
+                print ("Regular  - %s\t      '3'" % inventoryManagement.has_item('Regular Potion'))
+            if inventoryManagement.has_item('Big Potion') >= 0:
+                print ("Big      - %s\t      '4'" % inventoryManagement.has_item('Big Potion'))
+            if inventoryManagement.has_item('Large Potion') >= 0:
+                print ("Large    - %s\t      '5'" % inventoryManagement.has_item('Large Potion'))
+            if inventoryManagement.has_item('Huge Potion') >= 0:
+                print ("Huge     - %s\t      '6'" % inventoryManagement.has_item('Huge Potion'))
+            if inventoryManagement.has_item('Gigantic Potion') >= 0:
+                print ("Gigantic - %s\t      '7'" % inventoryManagement.has_item('Gigantic Potion'))
+            if inventoryManagement.has_item('Epic Potion') >= 0:
+                print ("Epic     - %s\t      '8'" % inventoryManagement.has_item('Epic Potion'))
 
             print ("To cancel             'q'")
 
@@ -431,39 +420,39 @@ def heal():
 
             if potion == 0:
                 num = 10
-                remove_item('Tiny Potion')
+                inventoryManagement.remove_item('Tiny Potion')
                 break
             elif potion == 1:
                 num = 25
-                remove_item('Little Potion')
+                inventoryManagement.remove_item('Little Potion')
                 break
             elif potion == 2:
                 num = 50
-                remove_item('Small Potion')
+                inventoryManagement.remove_item('Small Potion')
                 break
             elif potion == 3:
                 num = 100
-                remove_item('Regular Potion')
+                inventoryManagement.remove_item('Regular Potion')
                 break
             elif potion == 4:
                 num = 150
-                remove_item('Big Potion')
+                inventoryManagement.remove_item('Big Potion')
                 break
             elif potion == 5:
                 num = 200
-                remove_item('Large Potion')
+                inventoryManagement.remove_item('Large Potion')
                 break
             elif potion == 6:
                 num = 300
-                remove_item('Huge Potion')
+                inventoryManagement.remove_item('Huge Potion')
                 break
             elif potion == 7:
                 num = 500
-                remove_item('Gigantic Potion')
+                inventoryManagement.remove_item('Gigantic Potion')
                 break
             elif potion == 8:
                 num = 1000
-                remove_item('Epic Potion')
+                inventoryManagement.remove_item('Epic Potion')
                 break
             else:
                 print ("Invalid Selection.")

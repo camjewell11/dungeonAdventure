@@ -4,6 +4,7 @@ playerCharacter = "none"
 faction = "none"
 charFile = "none"
 inventoryFile = "none"
+first = True
 
 def print_dash(skip=False):
     if skip:

@@ -199,7 +199,7 @@ def find_item(stage_num):
             return False
 
         num = 1
-        if autotake:
+        if environment.autotake:
             if item == "Gold Piece":
                 num = randint(1, stage_num ** 2)
                 print ("You found %s Gold Pieces. You take the gold.\n" % num)

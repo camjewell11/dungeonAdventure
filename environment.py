@@ -1,6 +1,16 @@
 import os
-import IO
+import character, IO
 from random import randint
+
+skillPoints = 0
+floorMap = []
+begin = []
+stop = []
+current = []
+youDied = False
+
+autotake = 0
+autosneak = 0
 
 def setupDirectories():
     workingDir = "Dungeon/Game/"
@@ -11,7 +21,6 @@ def setupDirectories():
 
 def toggle_autotake():
     global autotake
-
     lines = open(IO.charFile, 'r').readlines()
     temp = int(lines[21])
     if temp == 1:
@@ -37,7 +46,6 @@ def get_autotake():
 
 def set_autotake():
     global autotake
-
     if get_autotake() == 0:
         autotake = 0
     else:
@@ -45,7 +53,6 @@ def set_autotake():
 
 def toggle_autosneak():
     global autosneak
-
     lines = open(IO.charFile, 'r').readlines()
     temp = int(lines[22])
     if temp == 1:
@@ -71,7 +78,6 @@ def get_autosneak():
 
 def set_autosneak():
     global autosneak
-
     if get_autosneak() == 0:
         autosneak = 0
     else:
@@ -79,10 +85,6 @@ def set_autosneak():
 
 def generate_floor(num):
     global floorMap
-    global begin
-    global stop
-    global current
-
     num = (num / 3) + 2
     floorMap = [[0] * num for _ in range(num)]
 
@@ -95,12 +97,16 @@ def generate_floor(num):
         if exitX != startX or exitY != startY:
             break
 
+    
+    global begin
+    global current
+    global stop
+
     begin = [startX, startY]
     current = [startX, startY]
     stop = [exitX, exitY]
 
 def print_floor():
-    global floorMap
     print ("")
     for x in range(len(floorMap)):
         for y in range(len(floorMap)):
@@ -120,7 +126,6 @@ def print_floor():
 def settings():
     if IO.playerCharacter == 'none':
         character.select_character()
-    global autotake
     while True:
         print ("         Settings            ")
         IO.print_dash()
@@ -159,23 +164,23 @@ def settings():
                     print ("Removed %s.\n" % choice)
                     IO.print_dash()
         elif selection == 't':
-            print ("Would you like to change autotake? Currently set to %s. (y/n)" % environment.get_autotake())
+            print ("Would you like to change autotake? Currently set to %s. (y/n)" % get_autotake())
             choice = input("\n")
             print ("")
             if choice == 'y':
-                environment.toggle_autotake()
-                print ("Autotake is now %s.\n" % environment.get_autotake())
+                toggle_autotake()
+                print ("Autotake is now %s.\n" % get_autotake())
             elif choice == 'n':
                 print ("Returning to menu.\n")
             else:
                 print ("Invalid Selection.\n")
         elif selection == 's':
-            print ("Would you like to change autosneak? Currently set to %s. (y/n)" % environment.get_autosneak())
+            print ("Would you like to change autosneak? Currently set to %s. (y/n)" % get_autosneak())
             choice = input("\n")
             print ("")
             if choice == 'y':
-                environment.toggle_autosneak()
-                print ("Autosneak is now %s.\n" % environment.get_autosneak())
+                toggle_autosneak()
+                print ("Autosneak is now %s.\n" % get_autosneak())
             elif choice == 'n':
                 print ("Returning to menu.\n")
             else:

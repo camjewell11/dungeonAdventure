@@ -4,16 +4,6 @@ from select import select
 
 import character, config, environment, inventoryManagement, IO
 
-skillPoints = 0
-first = True
-floorMap = []
-begin = []
-stop = []
-current = []
-youDied = False
-autotake = 0
-autosneak = 0
-
 def start():
     while True:
         print ("What would you like to do?")
@@ -98,15 +88,10 @@ def play_game():
     if IO.playerCharacter == 'none':
         IO.select_character()
 
-    global begin
-    global stop
-    global current
-    current = begin
-
-    global youDied
+    environment.current = environment.begin
 
     while True:
-        youDied = False
+        environment.youDied = False
         play_stage = False
         specific = False
 
@@ -153,24 +138,24 @@ def play_game():
             direction = "none"
 
             if chance > stage_num:
-                if current[0] > stop[0]:
-                    if current[1] > stop[1]:
+                if environment.current[0] > environment.stop[0]:
+                    if environment.current[1] > environment.stop[1]:
                         direction = "northwest"
-                    elif current[1] < stop[1]:
+                    elif environment.current[1] < environment.stop[1]:
                         direction = "northeast"
                     else:
                         direction = "north"
-                elif current[0] < stop[0]:
-                    if current[1] > stop[1]:
+                elif environment.current[0] < environment.stop[0]:
+                    if environment.current[1] > environment.stop[1]:
                         direction = "southwest"
-                    elif current[1] < stop[1]:
+                    elif environment.current[1] < environment.stop[1]:
                         direction = "southeast"
                     else:
                         direction = "south"
                 else:
-                    if current[1] > stop[1]:
+                    if environment.current[1] > environment.stop[1]:
                         direction = "west"
-                    elif current[1] < stop[1]:
+                    elif environment.current[1] < environment.stop[1]:
                         direction = "east"
 
                 randy = randint(1, 3)
@@ -184,9 +169,9 @@ def play_game():
             IO.print_dash()
 
             while True:
-                if youDied:
+                if environment.youDied:
                     break
-                if current[0] == stop[0] and current[1] == stop[1]:
+                if environment.current[0] == environment.stop[0] and environment.current[1] == environment.stop[1]:
                     print ("You have escaped the Labyrinth!")
                     IO.print_dash(True)
                     if not specific:
@@ -304,7 +289,6 @@ def play_game():
                     print ("Invalid Selection.\n")
 
 def move():
-    global current
     num = 0
 
     while True:
@@ -335,22 +319,22 @@ def move():
         else:
             print ("Invalid Selection.\n")
 
-    x = current[0]
-    y = current[1]
-    length = len(floorMap)
+    x = environment.current[0]
+    y = environment.current[1]
+    length = len(environment.floorMap)
 
     if num == 0 and not x == 0:  # up
-        current[0] = x - 1
-        floorMap[x][y] += 1
+        environment.current[0] = x - 1
+        environment.floorMap[x][y] += 1
     elif num == 1 and not y == length - 1:  # right
-        current[1] = y + 1
-        floorMap[x][y] += 1
+        environment.current[1] = y + 1
+        environment.floorMap[x][y] += 1
     elif num == 2 and not x == length - 1:  # down
-        current[0] = x + 1
-        floorMap[x][y] += 1
+        environment.current[0] = x + 1
+        environment.floorMap[x][y] += 1
     elif num == 3 and not y == 0:  # left
-        current[1] = y - 1
-        floorMap[x][y] += 1
+        environment.current[1] = y - 1
+        environment.floorMap[x][y] += 1
     else:
         print ("You run into the cave wall...\n")
         return False
@@ -364,7 +348,7 @@ def progress(stage_num):
         can_sneak = sneak(stage_num)
 
         while True:
-            if autosneak:
+            if environment.autosneak:
                 randy = randint(1, 3)
                 if can_sneak:
                     if randy == 1:
@@ -433,7 +417,6 @@ def progress(stage_num):
                     count += 1
 
 def battle(stage_num):
-    global youDied
     max_damage = character.get_skill_level('strength') * 2
     max_defense = character.get_skill_level('defense') * 2
     accuracy = character.get_skill_level('accuracy') * 2
@@ -460,7 +443,7 @@ def battle(stage_num):
 
     while True:
         if health <= 0:
-            youDied = True
+            environment.youDied = True
             character.died()
             break
         if enemy_health <= 0:
