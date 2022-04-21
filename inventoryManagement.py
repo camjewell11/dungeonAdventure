@@ -1,3 +1,4 @@
+from random import randint
 import character, config, IO
 
 def has_item(item):
@@ -170,6 +171,63 @@ def offer_items(stage_num):
     if stage_num >= 30:
         print ("Legendary Potion \t-\t %s gold" % int(get_cost('Legendary Potion')*1.2))
     print ("")
+
+def find_item(stage_num):
+    randy = randint(0, character.get_skill_level('luck'))
+    chance = randint(1, 3)
+
+    if chance > 2:
+        if randy > 75 and stage_num > 25:
+            item, values = random.choice(list(config.item_table9.items()))
+        elif randy > 50 and stage_num > 20:
+            item, values = random.choice(list(config.item_table8.items()))
+        elif randy > 45 and stage_num > 16:
+            item, values = random.choice(list(config.item_table7.items()))
+        elif randy > 35 and stage_num > 12:
+            item, values = random.choice(list(config.item_table6.items()))
+        elif randy > 25 and stage_num > 8:
+            item, values = random.choice(list(config.item_table5.items()))
+        elif randy > 15 and stage_num > 4:
+            item, values = random.choice(list(config.item_table4.items()))
+        elif randy > 10 and stage_num > 3:
+            item, values = random.choice(list(config.item_table3.items()))
+        elif randy > 5 and stage_num > 2:
+            item, values = random.choice(list(config.item_table2.items()))
+        elif randy > 3 and stage_num > 1:
+            item, values = random.choice(list(config.item_table1.items()))
+        else:
+            return False
+
+        num = 1
+        if autotake:
+            if item == "Gold Piece":
+                num = randint(1, stage_num ** 2)
+                print ("You found %s Gold Pieces. You take the gold.\n" % num)
+            else:
+                print ("You found a %s.\nYou take the %s.\n" % (item, item))
+        else:
+            if item == "Gold Piece":
+                num = randint(1, stage_num ** 2)
+                print ("You found %s Gold Pieces." % num)
+            else:
+                print ("You found a %s.\n" % item)
+
+            print ("Would you like to take it? (y/n)")
+            choice = input("\n")
+            print ("")
+            if choice == 'y':
+                if num > 1:
+                    print ("You take the gold.\n")
+                else:
+                    print ("You take the %s.\n" % item)
+            else:
+                print ("You left it behind.\n")
+
+        add_item(item, num)
+
+    else:
+        return False
+    return True
 
 def get_cost(item):
     if item in config.item_table1:

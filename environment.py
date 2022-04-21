@@ -116,3 +116,71 @@ def print_floor():
     print ("Current: %s" % current)
     print ("Start: %s" % begin)
     print ("Exit: %s\n" % stop)
+
+def settings():
+    if IO.playerCharacter == 'none':
+        character.select_character()
+    global autotake
+    while True:
+        print ("         Settings            ")
+        IO.print_dash()
+        print ("To Delete Character       'd'")
+        print ("To toggle autotake items  't'")
+        print ("To toggle autosneak       's'")
+        print ("To quit                   'q'")
+        selection = input("\n")
+        print ("")
+
+        if selection == 'd':
+            chars = os.listdir("characters")
+            print ("Which Character would you like to delete?")
+            spot = 0
+            for i in chars:
+                chars[spot] = i[:-4]
+                print ("- %s" % chars[spot])
+                spot += 1
+            print ("\nTo cancel                 'c'")
+
+            while True:
+                choice = input("\n")
+                print ("")
+                if choice == 'c':
+                    break
+                elif choice not in chars:
+                    print ("%s is not a valid character." % choice)
+                    IO.print_dash(True)
+                    print ("Which Character would you like to delete?")
+                    for i in chars:
+                        print ("- %s" % i)
+                    print ("\nTo cancel            'c'")
+                else:
+                    os.remove("characters/%s.txt" % choice)
+                    os.remove("inventories/%s.inv" % choice)
+                    print ("Removed %s.\n" % choice)
+                    IO.print_dash()
+        elif selection == 't':
+            print ("Would you like to change autotake? Currently set to %s. (y/n)" % environment.get_autotake())
+            choice = input("\n")
+            print ("")
+            if choice == 'y':
+                environment.toggle_autotake()
+                print ("Autotake is now %s.\n" % environment.get_autotake())
+            elif choice == 'n':
+                print ("Returning to menu.\n")
+            else:
+                print ("Invalid Selection.\n")
+        elif selection == 's':
+            print ("Would you like to change autosneak? Currently set to %s. (y/n)" % environment.get_autosneak())
+            choice = input("\n")
+            print ("")
+            if choice == 'y':
+                environment.toggle_autosneak()
+                print ("Autosneak is now %s.\n" % environment.get_autosneak())
+            elif choice == 'n':
+                print ("Returning to menu.\n")
+            else:
+                print ("Invalid Selection.\n")
+        elif selection == 'q':
+            break
+        else:
+            print ("Invalid Selection.\n")

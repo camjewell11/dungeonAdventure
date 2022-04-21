@@ -2,7 +2,7 @@ import os, random, sys
 from random import randint
 from select import select
 
-import character, config, environment, IO
+import character, config, environment, inventoryManagement, IO
 
 skillPoints = 0
 first = True
@@ -34,7 +34,7 @@ def start():
         elif selection == '3':
             play_game()
         elif selection == '4':
-            settings()
+            environment.settings()
         elif selection == '5' or selection == 'q':
             break
         elif selection == 'debug':
@@ -94,74 +94,6 @@ def debug_menu():
         else:
             print ("Invalid selection.\n")
 
-def settings():
-    if IO.playerCharacter == 'none':
-        character.select_character()
-    global autotake
-    while True:
-        print ("         Settings            ")
-        IO.print_dash()
-        print ("To Delete Character       'd'")
-        print ("To toggle autotake items  't'")
-        print ("To toggle autosneak       's'")
-        print ("To quit                   'q'")
-        selection = input("\n")
-        print ("")
-
-        if selection == 'd':
-            chars = os.listdir("characters")
-            print ("Which Character would you like to delete?")
-            spot = 0
-            for i in chars:
-                chars[spot] = i[:-4]
-                print ("- %s" % chars[spot])
-                spot += 1
-            print ("\nTo cancel                 'c'")
-
-            while True:
-                choice = input("\n")
-                print ("")
-                if choice == 'c':
-                    break
-                elif choice not in chars:
-                    print ("%s is not a valid character." % choice)
-                    IO.print_dash(True)
-                    print ("Which Character would you like to delete?")
-                    for i in chars:
-                        print ("- %s" % i)
-                    print ("\nTo cancel            'c'")
-                else:
-                    os.remove("characters/%s.txt" % choice)
-                    os.remove("inventories/%s.inv" % choice)
-                    print ("Removed %s.\n" % choice)
-                    IO.print_dash()
-        elif selection == 't':
-            print ("Would you like to change autotake? Currently set to %s. (y/n)" % environment.get_autotake())
-            choice = input("\n")
-            print ("")
-            if choice == 'y':
-                environment.toggle_autotake()
-                print ("Autotake is now %s.\n" % environment.get_autotake())
-            elif choice == 'n':
-                print ("Returning to menu.\n")
-            else:
-                print ("Invalid Selection.\n")
-        elif selection == 's':
-            print ("Would you like to change autosneak? Currently set to %s. (y/n)" % environment.get_autosneak())
-            choice = input("\n")
-            print ("")
-            if choice == 'y':
-                environment.toggle_autosneak()
-                print ("Autosneak is now %s.\n" % environment.get_autosneak())
-            elif choice == 'n':
-                print ("Returning to menu.\n")
-            else:
-                print ("Invalid Selection.\n")
-        elif selection == 'q':
-            break
-        else:
-            print ("Invalid Selection.\n")
-
 def play_game():
     if IO.playerCharacter == 'none':
         IO.select_character()
@@ -202,7 +134,7 @@ def play_game():
             else:
                 print ("You have not reached that stage yet.\n")
         elif selection == 's':
-            shop()
+            inventoryManagement.shop()
         elif selection == 'i':
             character.display_info()
             IO.print_dash()
@@ -364,7 +296,7 @@ def play_game():
                     if moved:
                         progress(stage_num)
                 elif selection == 'h':
-                    heal()
+                    character.heal()
                 elif selection == 'q':
                     print ("Exiting the Labyrinth.")
                     break
@@ -425,7 +357,7 @@ def move():
     return True
 
 def progress(stage_num):
-    found = find_item(stage_num)
+    found = inventoryManagement.find_item(stage_num)
 
     # If item not found
     if not found:
@@ -540,7 +472,7 @@ def battle(stage_num):
                 print ("Turns out to be nothing.\n")
             else:
                 print ("You approach vicariously.\n")
-                found = find_item(stage_num)
+                found = inventoryManagement.find_item(stage_num)
                 if not found:
                     print ("Turns out it was nothing...\n")
 
@@ -577,7 +509,7 @@ def battle(stage_num):
                     IO.print_dash(True)
                     break
                 elif choice == 'h':
-                    heal()
+                    character.heal()
                     break
                 elif choice == 'f':
                     print ("You attempt to flee!\n")
@@ -612,63 +544,6 @@ def battle(stage_num):
             IO.print_dash()
             turn = 1
 
-def find_item(stage_num):
-    randy = randint(0, character.get_skill_level('luck'))
-    chance = randint(1, 3)
-
-    if chance > 2:
-        if randy > 75 and stage_num > 25:
-            item, values = random.choice(list(config.item_table9.items()))
-        elif randy > 50 and stage_num > 20:
-            item, values = random.choice(list(config.item_table8.items()))
-        elif randy > 45 and stage_num > 16:
-            item, values = random.choice(list(config.item_table7.items()))
-        elif randy > 35 and stage_num > 12:
-            item, values = random.choice(list(config.item_table6.items()))
-        elif randy > 25 and stage_num > 8:
-            item, values = random.choice(list(config.item_table5.items()))
-        elif randy > 15 and stage_num > 4:
-            item, values = random.choice(list(config.item_table4.items()))
-        elif randy > 10 and stage_num > 3:
-            item, values = random.choice(list(config.item_table3.items()))
-        elif randy > 5 and stage_num > 2:
-            item, values = random.choice(list(config.item_table2.items()))
-        elif randy > 3 and stage_num > 1:
-            item, values = random.choice(list(config.item_table1.items()))
-        else:
-            return False
-
-        num = 1
-        if autotake:
-            if item == "Gold Piece":
-                num = randint(1, stage_num ** 2)
-                print ("You found %s Gold Pieces. You take the gold.\n" % num)
-            else:
-                print ("You found a %s.\nYou take the %s.\n" % (item, item))
-        else:
-            if item == "Gold Piece":
-                num = randint(1, stage_num ** 2)
-                print ("You found %s Gold Pieces." % num)
-            else:
-                print ("You found a %s.\n" % item)
-
-            print ("Would you like to take it? (y/n)")
-            choice = input("\n")
-            print ("")
-            if choice == 'y':
-                if num > 1:
-                    print ("You take the gold.\n")
-                else:
-                    print ("You take the %s.\n" % item)
-            else:
-                print ("You left it behind.\n")
-
-        add_item(item, num)
-
-    else:
-        return False
-    return True
-
 def sneak(stage_num):
     randy = randint(1, stage_num)
     quiet = randint(1, 3)
@@ -681,7 +556,6 @@ def sneak(stage_num):
 
 # If this is run as a script.
 if __name__ == '__main__':
-    main()
     environment.setupDirectories()
 
     print ("Welcome to Cam's Prototype game!\n")
