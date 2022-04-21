@@ -121,7 +121,7 @@ def play_game():
         elif selection == 's':
             inventoryManagement.shop()
         elif selection == 'i':
-            character.display_info()
+            IO.display_info()
             IO.print_dash()
         elif selection == 'q':
             break
@@ -133,7 +133,7 @@ def play_game():
 
             print ("You have entered the Labyrinth - Stage %s. Good luck...\n" % stage_num)
 
-            wisdom = character.character.get_skill_level('wisdom')
+            wisdom = character.get_skill_level('wisdom')
             chance = randint(0, wisdom * 3)
             direction = "none"
 

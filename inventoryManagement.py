@@ -1,5 +1,5 @@
-from random import randint
-import character, config, IO
+import random
+import character, config, environment, IO
 
 def has_item(item):
     f = open(IO.inventoryFile, "r")
@@ -64,7 +64,7 @@ def shop():
         print ("To buy                 'b'")
         print ("To quit                'q'")
         print ("")
-        print ("You have %s gold." % has_item('Gold Piece'))
+        print ("You have %s gold." % has_item('Gold Pieces'))
 
         selection = input("\n")
         print ("")
@@ -82,7 +82,7 @@ def shop():
                         print ("%s \t-\t %s      \t%s gold" % (item, quantity, cost))
 
                 print ("\nTo quit                         'q'")
-                print ("You have %s gold." % has_item('Gold Piece'))
+                print ("You have %s gold." % has_item('Gold Pieces'))
                 item = input("\n")
                 print ("")
 
@@ -92,7 +92,7 @@ def shop():
                     print ("You do not have any %s's.\n" % item)
                 elif has_item(item) == 1:
                     remove_item(item)
-                    add_item('Gold Piece', get_cost(item))
+                    add_item('Gold Pieces', get_cost(item))
                     print ("You've just sold a %s for %s gold pieces." % (item, get_cost(item)))
                     IO.print_dash(True)
                     break
@@ -108,7 +108,7 @@ def shop():
                             print ("You cannot sell less than 1...\n")
                         elif num <= has_item(item):
                             print ("You sell %s %s\'s for %s gold.\n" % (num, item, num*get_cost(item)))
-                            add_item('Gold Piece', get_cost(item)*num)
+                            add_item('Gold Pieces', get_cost(item)*num)
                             remove_item(item, num)
                             break
                         elif num == 'q':
@@ -125,7 +125,7 @@ def shop():
                 offer_items(character.get_stage())
 
                 print ("To quit                  'q'")
-                print ("You have %s gold." % has_item('Gold Piece'))
+                print ("You have %s gold." % has_item('Gold Pieces'))
 
                 item = input("\n")
                 print ("")
@@ -139,7 +139,7 @@ def shop():
                 elif cost > 0:
                     print ("You bought a %s for %s gold.\n" % (item, cost))
                     add_item(item, 1)
-                    remove_item('Gold Piece', cost)
+                    remove_item('Gold Pieces', cost)
                 else:
                     print ("Invalid selection.\n")
 
@@ -173,8 +173,8 @@ def offer_items(stage_num):
     print ("")
 
 def find_item(stage_num):
-    randy = randint(0, character.get_skill_level('luck'))
-    chance = randint(1, 3)
+    randy = random.randint(0, character.get_skill_level('luck'))
+    chance = random.randint(1, 3)
 
     if chance > 2:
         if randy > 75 and stage_num > 25:
@@ -201,13 +201,13 @@ def find_item(stage_num):
         num = 1
         if environment.autotake:
             if item == "Gold Piece":
-                num = randint(1, stage_num ** 2)
+                num = random.randint(1, stage_num ** 2)
                 print ("You found %s Gold Pieces. You take the gold.\n" % num)
             else:
                 print ("You found a %s.\nYou take the %s.\n" % (item, item))
         else:
             if item == "Gold Piece":
-                num = randint(1, stage_num ** 2)
+                num = random.randint(1, stage_num ** 2)
                 print ("You found %s Gold Pieces." % num)
             else:
                 print ("You found a %s.\n" % item)

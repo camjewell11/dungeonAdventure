@@ -1,4 +1,4 @@
-import os
+import math, os
 import character, IO
 from random import randint
 
@@ -85,7 +85,7 @@ def set_autosneak():
 
 def generate_floor(num):
     global floorMap
-    num = (num / 3) + 2
+    num = math.floor((num / 3) + 2)
     floorMap = [[0] * num for _ in range(num)]
 
     startX = randint(0, num - 1)
@@ -97,7 +97,6 @@ def generate_floor(num):
         if exitX != startX or exitY != startY:
             break
 
-    
     global begin
     global current
     global stop
