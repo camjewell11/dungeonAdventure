@@ -59,77 +59,21 @@ def shop():
     print ("Welcome to the General Store!")
     print ("Here you can find all sorts of goodies and unload some of your pack.\n")
     while True:
-        print ("What would you like to do?")
-        print ("To sell                's'")
-        print ("To buy                 'b'")
-        print ("To quit                'q'")
-        print ("")
-        print ("You have %s gold." % has_item('Gold Pieces'))
-
-        selection = input("\n")
-        print ("")
+        IO.printShopPrompt()
+        selection = IO.getSelectionFromUser(['s','b','q'], "\n")
 
         if selection == 's':
-            while True:
-                print ("What would you like to sell?")
-                f = open(IO.inventoryFile, 'r')
-                for i, line in enumerate(f):
-                    if i > 1:
-                        spot = line.index(':')
-                        item = line[:spot]
-                        quantity = line[spot + 1:-1]
-                        cost = get_cost(item)
-                        print ("%s \t-\t %s      \t%s gold" % (item, quantity, cost))
-
-                print ("\nTo quit                         'q'")
-                print ("You have %s gold." % has_item('Gold Pieces'))
-                item = input("\n")
-                print ("")
-
-                if item == 'q':
-                    break
-                elif has_item(item) == 0:
-                    print ("You do not have any %s's.\n" % item)
-                elif has_item(item) == 1:
-                    remove_item(item)
-                    add_item('Gold Pieces', get_cost(item))
-                    print ("You've just sold a %s for %s gold pieces." % (item, get_cost(item)))
-                    IO.print_dash(True)
-                    break
-                elif has_item(item) > 1:
-                    while True:
-                        print ("How many would you like to sell? You have %s. 'q' to quit." % has_item(item))
-                        num = int(input("\n")) if num != 'q' else 'q'
-                        print ("")
-
-                        if num > has_item(item):
-                            print ("You do not have that many...\n")
-                        elif num < 1:
-                            print ("You cannot sell less than 1...\n")
-                        elif num <= has_item(item):
-                            print ("You sell %s %s\'s for %s gold.\n" % (num, item, num*get_cost(item)))
-                            add_item('Gold Pieces', get_cost(item)*num)
-                            remove_item(item, num)
-                            break
-                        elif num == 'q':
-                            break
-                        else:
-                            print ("Invalid selection.\n")
-                else:
-                    print ("Invalid selection.\n")
-
+            sellItem()
         elif selection == 'b':
             print ("We have lots to offer!\n")
             while True:
                 print ("What would you like to buy?\n")
                 offer_items(character.get_stage())
-
                 print ("To quit                  'q'")
                 print ("You have %s gold." % has_item('Gold Pieces'))
 
                 item = input("\n")
                 print ("")
-
                 cost = int(get_cost(item)*1.2)
 
                 if item == 'q':
@@ -141,12 +85,60 @@ def shop():
                     add_item(item, 1)
                     remove_item('Gold Pieces', cost)
                 else:
-                    print ("Invalid selection.\n")
-
+                    print (config.invalidResponse)
         elif selection == 'q':
             break
         else:
-            print ("Invalid selection.\n")
+            print (config.invalidResponse)
+
+def sellItem():
+    while True:
+        print ("What would you like to sell?")
+        f = open(IO.inventoryFile, 'r')
+        for i, line in enumerate(f):
+            if i > 1:
+                spot = line.index(':')
+                item = line[:spot]
+                quantity = line[spot + 1:-1]
+                cost = get_cost(item)
+                print ("%s \t-\t %s      \t%s gold" % (item, quantity, cost))
+
+        print ("\nTo quit                         'q'")
+        print ("You have %s gold." % has_item('Gold Pieces'))
+        item = input("\n")
+        print ("")
+
+        if item == 'q':
+            break
+        elif has_item(item) == 0:
+            print ("You do not have any %s's.\n" % item)
+        elif has_item(item) == 1:
+            remove_item(item)
+            add_item('Gold Pieces', get_cost(item))
+            print ("You've just sold a %s for %s gold pieces." % (item, get_cost(item)))
+            IO.print_dash(True)
+            break
+        elif has_item(item) > 1:
+            while True:
+                print ("How many would you like to sell? You have %s. 'q' to quit." % has_item(item))
+                num = int(input("\n")) if num != 'q' else 'q'
+                print ("")
+
+                if num > has_item(item):
+                    print ("You do not have that many...\n")
+                elif num < 1:
+                    print ("You cannot sell less than 1...\n")
+                elif num <= has_item(item):
+                    print ("You sell %s %s\'s for %s gold.\n" % (num, item, num*get_cost(item)))
+                    add_item('Gold Pieces', get_cost(item)*num)
+                    remove_item(item, num)
+                    break
+                elif num == 'q':
+                    break
+                else:
+                    print (config.invalidResponse)
+        else:
+            print (config.invalidResponse)
 
 def offer_items(stage_num):
     print ("Tiny Potion \t-\t %s gold" % int(get_cost('Tiny Potion')*1.2))
@@ -173,61 +165,56 @@ def offer_items(stage_num):
     print ("")
 
 def find_item(stage_num):
-    randy = random.randint(0, character.get_skill_level('luck'))
     chance = random.randint(0, 2)
-
-    if chance > 2:
-        if randy > 75 and stage_num > 25:
-            item, values = random.choice(list(config.item_table9.items()))
-        elif randy > 50 and stage_num > 20:
-            item, values = random.choice(list(config.item_table8.items()))
-        elif randy > 45 and stage_num > 16:
-            item, values = random.choice(list(config.item_table7.items()))
-        elif randy > 35 and stage_num > 12:
-            item, values = random.choice(list(config.item_table6.items()))
-        elif randy > 25 and stage_num > 8:
-            item, values = random.choice(list(config.item_table5.items()))
-        elif randy > 15 and stage_num > 4:
-            item, values = random.choice(list(config.item_table4.items()))
-        elif randy > 10 and stage_num > 3:
-            item, values = random.choice(list(config.item_table3.items()))
-        elif randy > 5 and stage_num > 2:
-            item, values = random.choice(list(config.item_table2.items()))
-        elif randy > 3 and stage_num > 1:
-            item, values = random.choice(list(config.item_table1.items()))
+    if chance == 2:
+        amountGold = 1
+        item = getItemFromStage(stage_num)
+        if item == "Gold Piece":
+            amountGold = random.randint(1, stage_num ** 2)
+            print ("You found %s Gold Pieces." % amountGold)
         else:
-            return False
+            print ("You found a %s.\n" % item)
 
-        num = 1
-        if environment.autotake:
-            if item == "Gold Piece":
-                num = random.randint(1, stage_num ** 2)
-                print ("You found %s Gold Pieces. You take the gold.\n" % num)
-            else:
-                print ("You found a %s.\nYou take the %s.\n" % (item, item))
-        else:
-            if item == "Gold Piece":
-                num = random.randint(1, stage_num ** 2)
-                print ("You found %s Gold Pieces." % num)
-            else:
-                print ("You found a %s.\n" % item)
-
+        if not environment.autotake:
             print ("Would you like to take it? (y/n)")
             choice = input("\n")
             print ("")
-            if choice == 'y':
-                if num > 1:
-                    print ("You take the gold.\n")
-                else:
-                    print ("You take the %s.\n" % item)
+        if environment.autotake or choice == 'y':
+            if amountGold > 1:
+                print ("You take the gold.\n")
             else:
-                print ("You left it behind.\n")
+                print ("You take the %s.\n" % item)
+        else:
+            print ("You left it behind.\n")
 
-        add_item(item, num)
-
+        add_item(item, amountGold)
     else:
         return False
     return True
+
+def getItemFromStage(stage_num):
+    randy = random.randint(0, character.get_skill_level('luck'))
+    if randy > 75 and stage_num > 25:
+        item, values = random.choice(list(config.item_table9.items()))
+    elif randy > 50 and stage_num > 20:
+        item, values = random.choice(list(config.item_table8.items()))
+    elif randy > 45 and stage_num > 16:
+        item, values = random.choice(list(config.item_table7.items()))
+    elif randy > 35 and stage_num > 12:
+        item, values = random.choice(list(config.item_table6.items()))
+    elif randy > 25 and stage_num > 8:
+        item, values = random.choice(list(config.item_table5.items()))
+    elif randy > 15 and stage_num > 4:
+        item, values = random.choice(list(config.item_table4.items()))
+    elif randy > 10 and stage_num > 3:
+        item, values = random.choice(list(config.item_table3.items()))
+    elif randy > 5 and stage_num > 2:
+        item, values = random.choice(list(config.item_table2.items()))
+    elif randy > 3 and stage_num > 1:
+        item, values = random.choice(list(config.item_table1.items()))
+    else:
+        return False
+    return item
 
 def get_cost(item):
     if item in config.item_table1:

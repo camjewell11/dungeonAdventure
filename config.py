@@ -298,6 +298,9 @@ item_table10 = {     # [ID, Value]
     "Legendary Potion": [11, 1000]
 }
 
+promptAction = "What would you like to do?"
+invalidResponse = "Invalid selection.\n"
+
 directionalMessages = [
     "You feel a force pull you to the %s...",
     "There seems to be an inviting presence to the %s...",

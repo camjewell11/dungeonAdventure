@@ -169,7 +169,7 @@ def promptToggleAutotake():
     elif choice == 'n':
         print ("Returning to menu.\n")
     else:
-        print ("Invalid Selection.\n")
+        print (config.invalidResponse)
 
 def promptToggleAutosneak():
     print ("Would you like to change autosneak? Currently set to %s. (y/n)" % get_autosneak())
@@ -181,4 +181,4 @@ def promptToggleAutosneak():
     elif choice == 'n':
         print ("Returning to menu.\n")
     else:
-        print ("Invalid Selection.\n")
+        print (config.invalidResponse)

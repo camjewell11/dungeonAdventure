@@ -49,7 +49,7 @@ def debug_menu():
         elif selection == 'q':
             break
         else:
-            print ("Invalid selection.\n")
+            print (config.invalidResponse)
 
 # If this is run as a script.
 if __name__ == '__main__':

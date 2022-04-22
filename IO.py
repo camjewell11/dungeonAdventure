@@ -14,7 +14,7 @@ def print_dash(skip=False):
         print ("------------------------------")
 
 def printMainMenu():
-    print ("What would you like to do?")
+    print (config.promptAction)
     print_dash()
     print ("Create Character:        1")
     print ("Select Character:        2")
@@ -42,7 +42,7 @@ def printSettings():
     print ("To quit                   'q'")
 
 def printPlayGameOptions():
-    print ("What would you like to do?")
+    print (config.promptAction)
     print ("Continue on to Labyrinth - Stage %s   \t 'c'" % character.get_stage())
     print ("Enter a specific Labyrinth Stage      \t 'n'")
     print ("Enter the general store               \t 's'")
@@ -56,6 +56,14 @@ def printMoveDirection():
     print ("To move down         'd'")
     print ("To move left         'l'")
     print ("To cancel            'c'")
+
+def printShopPrompt():
+    print (config.promptAction)
+    print ("To sell                's'")
+    print ("To buy                 'b'")
+    print ("To quit                'q'")
+    print ("")
+    print ("You have %s gold." % character.has_item('Gold Pieces'))
 
 def display_faction_stats():
     while True:
@@ -141,7 +149,7 @@ def display_info():
     print ("Health:             \t   %s/%s\n" % (character.get_health(), character.get_max_health()))
 
 def printLevelExplore():
-    print ("What would you like to do?")
+    print (config.promptAction)
     print ("To move             'm'")
     print ("To heal             'h'")
     print ("To quit             'q'")
@@ -187,7 +195,7 @@ def getIntFromUser(prompt=""):
             print ("That wasn't a number!")
         else:
             break
-    print("")
+    print ("")
     return value
 
 def getSelectionFromUser(options, prompt="", error=""):
@@ -197,7 +205,7 @@ def getSelectionFromUser(options, prompt="", error=""):
             if error != "":
                 print (error)
             else:
-                print ("Invalid selection.\n")
+                print (config.invalidResponse)
         else:
-            print("")
+            print ("")
             return selection

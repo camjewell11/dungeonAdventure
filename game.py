@@ -44,7 +44,7 @@ def exploreLevel(stage_num, specific):
     while True:
         if environment.youDied:
             break
-        if environment.current[0] == environment.stop[0] and environment.current[1] == environment.stop[1]:
+        elif environment.current[0] == environment.stop[0] and environment.current[1] == environment.stop[1]:
             print ("You have escaped the Labyrinth!")
             IO.print_dash(True)
             if not specific:
@@ -118,12 +118,12 @@ def progress(stage_num):
                 print ("")
             if environment.autosneak or choice == 'y':
                 if can_sneak:
-                    print(config.sneakOptions[randy])
+                    print (config.sneakOptions[randy])
                 else:
-                    print(config.failedSneakOptions[randy])
+                    print (config.failedSneakOptions[randy])
                 break
             elif choice == 'n':
-                print(config.noSneakOptions[randy])
+                print (config.noSneakOptions[randy])
                 break
             else:
                 if count > 3:

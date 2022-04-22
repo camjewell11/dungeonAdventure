@@ -341,7 +341,7 @@ def level_up():
             print ("Leveled up Luck!\n")
             break
         else:
-            print ("Invalid Selection.\n")
+            print (config.invalidResponse)
 
     lines = open(IO.charFile, 'r').readlines()
     temp = int(lines[skill + 4])
