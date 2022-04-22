@@ -13,7 +13,7 @@ autotake = 0
 autosneak = 0
 
 def setupDirectories():
-    workingDir = "Dungeon/Game/"
+    workingDir = ""
     if not os.path.exists(workingDir + "characters"):
         os.makedirs(workingDir + "characters")
     if not os.path.exists(workingDir + "inventories"):

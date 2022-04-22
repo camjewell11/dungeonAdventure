@@ -297,3 +297,31 @@ item_table9 = {      # [ID, Value]
 item_table10 = {     # [ID, Value]
     "Legendary Potion": [11, 1000]
 }
+
+directionalMessages = [
+    "You feel a force pull you to the %s...",
+    "There seems to be an inviting presence to the %s...",
+    "You feel a flow of air moving to the %s..."
+]
+
+sneakOptions = [
+    "You managed to get by unnoticed...\n",
+    "You crawl beneath the danger in a sewage grate...\n",
+    "You sprint quietly beside the creature and sidle on...\n"
+]
+failedSneakOptions = [
+    "You couldn't sneak by!\n",
+    "The creature sees you!\n",
+    "You were unsuccessful!\n"
+]
+noSneakOptions = [
+    "You charge unwittingly into battle!\n",
+    "Prepare for battle!\n",
+    "You're in for it now!\n"
+]
+
+stageXP = [
+    50, 100, 150, 250, 500, 750, 1000, 1500, 2000, 2500, 3000,
+    3500, 4000, 4500, 5000, 6000, 7000, 8000, 9000, 10000,
+    12500, 15000, 17500, 20000, 22500, 25000, 30000, 35000, 40000
+]

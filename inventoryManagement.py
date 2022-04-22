@@ -174,7 +174,7 @@ def offer_items(stage_num):
 
 def find_item(stage_num):
     randy = random.randint(0, character.get_skill_level('luck'))
-    chance = random.randint(1, 3)
+    chance = random.randint(0, 2)
 
     if chance > 2:
         if randy > 75 and stage_num > 25:

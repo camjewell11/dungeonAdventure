@@ -1,4 +1,5 @@
-import character, config
+from random import randint
+import character, config, environment
 
 playerCharacter = "none"
 faction = "none"
@@ -11,6 +12,42 @@ def print_dash(skip=False):
         print ("------------------------------\n")
     else:
         print ("------------------------------")
+
+def printMainMenu():
+    print ("What would you like to do?")
+    print_dash()
+    print ("Create Character:        1")
+    print ("Select Character:        2")
+    print ("Play Game                3")
+    print ("Settings:                4")
+    print ("Exit:                    5")
+
+def printDebugMenu():
+    print ("Secret Debug Menu")
+    print_dash()
+    print ("For active info         'i'")
+    print ("To level up a skill     'u'")
+    print ("To add XP               'x'")
+    print ("To view enemy tables    'e'")
+    print ("To kill player          'k'")
+    print ("To create floorMap      'm'")
+    print ("To return               'q'")
+
+def printPlayGameOptions():
+    print ("What would you like to do?")
+    print ("Continue on to Labyrinth - Stage %s   \t 'c'" % character.get_stage())
+    print ("Enter a specific Labyrinth Stage      \t 'n'")
+    print ("Enter the general store               \t 's'")
+    print ("View my info/progression              \t 'i'")
+    print ("Quit                                  \t 'q'")
+
+def printMoveDirection():
+    print ("In which direction would you like to move?")
+    print ("To move up           'u'")
+    print ("To move right        'r'")
+    print ("To move down         'd'")
+    print ("To move left         'l'")
+    print ("To cancel            'c'")
 
 def display_faction_stats():
     while True:
@@ -94,3 +131,56 @@ def display_info():
     print ("Deaths:             \t   %s" % character.get_deaths())
     print ("Stage:              \t   %s" % character.get_stage())
     print ("Health:             \t   %s/%s\n" % (character.get_health(), character.get_max_health()))
+
+def printMapHint(stage_num):
+    wisdom = character.get_skill_level('wisdom')
+    chance = randint(0, wisdom * 3)
+
+    if chance > stage_num:
+        direction = getDirectionFromCurrentPosition()
+
+        randy = randint(0, 2)
+        print (config.directionalMessages[randy] % direction)
+
+def getDirectionFromCurrentPosition():
+    direction = "none"
+    if environment.current[0] > environment.stop[0]:
+        if environment.current[1] > environment.stop[1]:
+            direction = "northwest"
+        elif environment.current[1] < environment.stop[1]:
+            direction = "northeast"
+        else:
+            direction = "north"
+    elif environment.current[0] < environment.stop[0]:
+        if environment.current[1] > environment.stop[1]:
+            direction = "southwest"
+        elif environment.current[1] < environment.stop[1]:
+            direction = "southeast"
+        else:
+            direction = "south"
+    else:
+        if environment.current[1] > environment.stop[1]:
+            direction = "west"
+        elif environment.current[1] < environment.stop[1]:
+            direction = "east"
+    return direction
+
+def getIntFromUser(prompt=""):
+    while True:
+        try:
+            value = int(input(prompt))
+        except ValueError:
+            print ("That wasn't a number!")
+        else:
+            break
+    print("")
+    return value
+
+def getSelectionFromUser(options, prompt=""):
+    while True:
+        selection = input(prompt)
+        if selection not in options:
+            print ("Invalid selection.\n")
+        else:
+            print("")
+            return selection

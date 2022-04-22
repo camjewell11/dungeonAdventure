@@ -12,7 +12,7 @@
 				"name": "Game",
 				"type": "python",
 				"request": "launch",
-				"program": "game.py",
+				"program": "Main.py",
 				"console": "integratedTerminal",
 				"justMyCode": true
 			}
