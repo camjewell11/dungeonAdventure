@@ -73,13 +73,13 @@ def printShopPrompt():
     print ("To buy                 'b'")
     print ("To quit                'q'")
     print ("")
-    print ("You have %s gold." % character.has_item('Gold Pieces'))
+    print ("You have %s gold." % character.has_item(config.currencyName))
 
 def printShopOffers():
     print ("What would you like to buy?\n")
     inventoryManagement.offer_items(character.get_stage())
     print ("To quit                  'q'")
-    print ("You have %s gold." % inventoryManagement.has_item('Gold Pieces'))
+    print ("You have %s gold." % inventoryManagement.has_item(config.currencyName))
 
 def display_faction_stats():
     while True:

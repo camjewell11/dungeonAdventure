@@ -241,7 +241,7 @@ potionSizes = [
     "Tiny Potion", "Little Potion", "Small Potion", "Regular Potion", "Big Potion",
     "Large Potion", "Huge Potion", "Gigantic Potion", "Epic Potion", "Legendary Potion"
 ]
-currencyName = "Gold Piece"
+currencyName = "Gold Pieces"
 
 item_table1 = {      # [ID, Value]
     currencyName:      [1,      1],

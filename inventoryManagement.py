@@ -80,7 +80,7 @@ def shop():
                 elif cost > 0:
                     print ("You bought a %s for %s gold.\n" % (item, cost))
                     add_item(item, 1)
-                    remove_item('Gold Pieces', cost)
+                    remove_item(config.currencyName, cost)
                 else:
                     print (config.invalidResponse)
         elif selection == 'q':
@@ -101,7 +101,7 @@ def sellItem():
                 print ("%s \t-\t %s      \t%s gold" % (item, quantity, cost))
 
         print ("\nTo quit                         'q'")
-        print ("You have %s gold." % has_item('Gold Pieces'))
+        print ("You have %s gold." % has_item(config.currencyName))
         item = input("\n")
         print ("")
 
@@ -111,7 +111,7 @@ def sellItem():
             print ("You do not have any %s's.\n" % item)
         elif has_item(item) == 1:
             remove_item(item)
-            add_item('Gold Pieces', get_cost(item))
+            add_item(config.currencyName, get_cost(item))
             print ("You've just sold a %s for %s gold pieces." % (item, get_cost(item)))
             IO.print_dash(True)
             break
@@ -127,7 +127,7 @@ def sellItem():
                     print ("You cannot sell less than 1...\n")
                 elif num <= has_item(item):
                     print ("You sell %s %s\'s for %s gold.\n" % (num, item, num*get_cost(item)))
-                    add_item('Gold Pieces', get_cost(item)*num)
+                    add_item(config.currencyName, get_cost(item)*num)
                     remove_item(item, num)
                     break
                 elif num == 'q':
@@ -138,27 +138,28 @@ def sellItem():
             print (config.invalidResponse)
 
 def offer_items(stage_num):
-    print ("Tiny Potion \t-\t %s gold" % int(get_cost(config.potionSizes[0])*1.2))
+    costPrompt = "%s \t-\t %s gold"
+    print (    costPrompt % config.potionSizes[0], int(get_cost(config.potionSizes[0])*1.2))
     if stage_num > 1:
-        print ("Little Potion \t-\t %s gold" % int(get_cost(config.potionSizes[1])*1.2))
+        print (costPrompt % config.potionSizes[1], int(get_cost(config.potionSizes[1])*1.2))
     if stage_num > 3:
-        print ("Small Potion \t-\t %s gold" % int(get_cost(config.potionSizes[2])*1.2))
+        print (costPrompt % config.potionSizes[2], int(get_cost(config.potionSizes[2])*1.2))
     if stage_num > 6:
-        print ("Regular Potion \t-\t %s gold" % int(get_cost(config.potionSizes[3])*1.2))
+        print (costPrompt % config.potionSizes[3], int(get_cost(config.potionSizes[3])*1.2))
     if stage_num > 8:
         print ("Compass \t\t-\t %s gold" % int(get_cost('Compass')*1.2))
     if stage_num > 10:
-        print ("Big Potion \t-\t %s gold" % int(get_cost(config.potionSizes[4])*1.2))
+        print (costPrompt % config.potionSizes[4], int(get_cost(config.potionSizes[4])*1.2))
     if stage_num > 14:
-        print ("Large Potion \t-\t %s gold" % int(get_cost(config.potionSizes[5])*1.2))
+        print (costPrompt % config.potionSizes[5], int(get_cost(config.potionSizes[5])*1.2))
     if stage_num > 18:
-        print ("Huge Potion \t-\t %s gold" % int(get_cost(config.potionSizes[6])*1.2))
+        print (costPrompt % config.potionSizes[6], int(get_cost(config.potionSizes[6])*1.2))
     if stage_num > 22:
-        print ("Gigantic Potion \t-\t %s gold" % int(get_cost(config.potionSizes[7])*1.2))
+        print (costPrompt % config.potionSizes[7], int(get_cost(config.potionSizes[7])*1.2))
     if stage_num > 26:
-        print ("Epic Potion \t-\t %s gold" % int(get_cost(config.potionSizes[8])*1.2))
+        print (costPrompt % config.potionSizes[8], int(get_cost(config.potionSizes[8])*1.2))
     if stage_num >= 30:
-        print ("Legendary Potion \t-\t %s gold" % int(get_cost('Legendary Potion')*1.2))
+        print (costPrompt % config.potionSizes[9], int(get_cost(config.potionSizes[9], )*1.2))
     print ("")
 
 def find_item(stage_num):
