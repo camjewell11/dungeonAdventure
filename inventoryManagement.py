@@ -67,10 +67,7 @@ def shop():
         elif selection == 'b':
             print ("We have lots to offer!\n")
             while True:
-                print ("What would you like to buy?\n")
-                offer_items(character.get_stage())
-                print ("To quit                  'q'")
-                print ("You have %s gold." % has_item('Gold Pieces'))
+                IO.printShopOffers()
 
                 item = input("\n")
                 print ("")
@@ -141,25 +138,25 @@ def sellItem():
             print (config.invalidResponse)
 
 def offer_items(stage_num):
-    print ("Tiny Potion \t-\t %s gold" % int(get_cost('Tiny Potion')*1.2))
+    print ("Tiny Potion \t-\t %s gold" % int(get_cost(config.potionSizes[0])*1.2))
     if stage_num > 1:
-        print ("Little Potion \t-\t %s gold" % int(get_cost('Little Potion')*1.2))
+        print ("Little Potion \t-\t %s gold" % int(get_cost(config.potionSizes[1])*1.2))
     if stage_num > 3:
-        print ("Small Potion \t-\t %s gold" % int(get_cost('Small Potion')*1.2))
+        print ("Small Potion \t-\t %s gold" % int(get_cost(config.potionSizes[2])*1.2))
     if stage_num > 6:
-        print ("Regular Potion \t-\t %s gold" % int(get_cost('Regular Potion')*1.2))
+        print ("Regular Potion \t-\t %s gold" % int(get_cost(config.potionSizes[3])*1.2))
     if stage_num > 8:
         print ("Compass \t\t-\t %s gold" % int(get_cost('Compass')*1.2))
     if stage_num > 10:
-        print ("Big Potion \t-\t %s gold" % int(get_cost('Big Potion')*1.2))
+        print ("Big Potion \t-\t %s gold" % int(get_cost(config.potionSizes[4])*1.2))
     if stage_num > 14:
-        print ("Large Potion \t-\t %s gold" % int(get_cost('Large Potion')*1.2))
+        print ("Large Potion \t-\t %s gold" % int(get_cost(config.potionSizes[5])*1.2))
     if stage_num > 18:
-        print ("Huge Potion \t-\t %s gold" % int(get_cost('Huge Potion')*1.2))
+        print ("Huge Potion \t-\t %s gold" % int(get_cost(config.potionSizes[6])*1.2))
     if stage_num > 22:
-        print ("Gigantic Potion \t-\t %s gold" % int(get_cost('Gigantic Potion')*1.2))
+        print ("Gigantic Potion \t-\t %s gold" % int(get_cost(config.potionSizes[7])*1.2))
     if stage_num > 26:
-        print ("Epic Potion \t-\t %s gold" % int(get_cost('Epic Potion')*1.2))
+        print ("Epic Potion \t-\t %s gold" % int(get_cost(config.potionSizes[8])*1.2))
     if stage_num >= 30:
         print ("Legendary Potion \t-\t %s gold" % int(get_cost('Legendary Potion')*1.2))
     print ("")
@@ -169,7 +166,7 @@ def find_item(stage_num):
     if chance == 2:
         amountGold = 1
         item = getItemFromStage(stage_num)
-        if item == "Gold Piece":
+        if item == config.currencyName:
             amountGold = random.randint(1, stage_num ** 2)
             print ("You found %s Gold Pieces." % amountGold)
         else:

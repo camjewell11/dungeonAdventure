@@ -1,5 +1,5 @@
 from random import randint
-import character, config, environment
+import character, config, environment, game, inventoryManagement
 
 playerCharacter = "none"
 faction = "none"
@@ -41,6 +41,16 @@ def printSettings():
     print ("To toggle autosneak       's'")
     print ("To quit                   'q'")
 
+def printSelectClass():
+    print ("\nSelect Faction")
+    print_dash()
+    print ("Wizard         1")
+    print ("Archer         2")
+    print ("Warrior        3")
+    print ("Assassin       4")
+    print_dash()
+    print ("View Stats     5\n")
+
 def printPlayGameOptions():
     print (config.promptAction)
     print ("Continue on to Labyrinth - Stage %s   \t 'c'" % character.get_stage())
@@ -64,6 +74,12 @@ def printShopPrompt():
     print ("To quit                'q'")
     print ("")
     print ("You have %s gold." % character.has_item('Gold Pieces'))
+
+def printShopOffers():
+    print ("What would you like to buy?\n")
+    inventoryManagement.offer_items(character.get_stage())
+    print ("To quit                  'q'")
+    print ("You have %s gold." % inventoryManagement.has_item('Gold Pieces'))
 
 def display_faction_stats():
     while True:
@@ -154,6 +170,21 @@ def printLevelExplore():
     print ("To heal             'h'")
     print ("To quit             'q'")
 
+def printEscape():
+    print ("You have escaped the Labyrinth!")
+    print_dash(True)
+
+def printSkillUpgrade():
+    print ("Skills remaining to level: %s\n\n" % environment.skillPoints)
+    print ("Which level would you like to upgrade?")
+    print_dash()
+    print ("For Strength           's'")
+    print ("For Defense            'd'")
+    print ("For Accuracy           'a'")
+    print ("For Wisdom             'w'")
+    print ("For Stealth            't'")
+    print ("For Luck               'l'")
+
 def printMapHint(stage_num):
     wisdom = character.get_skill_level('wisdom')
     chance = randint(0, wisdom * 3)
@@ -186,6 +217,12 @@ def getDirectionFromCurrentPosition():
         elif environment.current[1] < environment.stop[1]:
             direction = "east"
     return direction
+
+def printSneak(stage_num, randy):
+    if game.sneak(stage_num):
+        print (config.sneakOptions[randy])
+    else:
+        print (config.failedSneakOptions[randy])
 
 def getIntFromUser(prompt=""):
     while True:

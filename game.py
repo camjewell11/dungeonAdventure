@@ -39,14 +39,14 @@ def play_game():
     IO.print_dash()
 
     exploreLevel(stage_num, specific)
+    play_game() # repeat until quit
 
 def exploreLevel(stage_num, specific):
     while True:
         if environment.youDied:
             break
         elif environment.current[0] == environment.stop[0] and environment.current[1] == environment.stop[1]:
-            print ("You have escaped the Labyrinth!")
-            IO.print_dash(True)
+            IO.printEscape()
             if not specific:
                 character.add_stage()
                 print ("You are awarded %d xp for this feat!\n" % config.stageXP[stage_num])
@@ -57,14 +57,14 @@ def exploreLevel(stage_num, specific):
         selection = IO.getSelectionFromUser(['m','h','q'],"\n")
 
         if selection == 'm':
-            if move():
+            # able to move and item not found
+            if move() and not inventoryManagement.find_item(stage_num):
                 progress(stage_num)
         elif selection == 'h':
             character.heal()
         elif selection == 'q':
             print ("Exiting the Labyrinth.")
             break
-    play_game()
 
 def move():
     IO.printMoveDirection()
@@ -103,37 +103,28 @@ def move():
     return True
 
 def progress(stage_num):
-    found = inventoryManagement.find_item(stage_num)
-
-    # If item not found
-    if not found:
-        can_sneak = sneak(stage_num)
-
-        count = 0
-        while True:
-            randy = random.randint(0, 2)
-            if not environment.autosneak:
-                print ("Would you like to try to sneak by? (y/n)")
-                choice = input("\n")
-                print ("")
-            if environment.autosneak or choice == 'y':
-                if can_sneak:
-                    print (config.sneakOptions[randy])
-                else:
-                    print (config.failedSneakOptions[randy])
-                break
-            elif choice == 'n':
-                print (config.noSneakOptions[randy])
-                break
+    count = 0
+    while True:
+        if not environment.autosneak:
+            print ("Would you like to try to sneak by? (y/n)")
+            choice = input("\n")
+            print ("")
+        randy = random.randint(0, 2)
+        if environment.autosneak or choice == 'y':
+            IO.printSneak(stage_num, randy)
+            break
+        elif choice == 'n':
+            print (config.noSneakOptions[randy])
+            break
+        else:
+            if count > 3:
+                print ("Dude. It's a yes or no question...\n")
             else:
-                if count > 3:
-                    print ("Dude. It's a yes or no question...\n")
-                else:
-                    print ("Invalid Selection.")
-                count += 1
-        IO.print_dash()
-        battle(stage_num)
-        IO.print_dash()
+                print ("Invalid Selection.")
+            count += 1
+    IO.print_dash()
+    battle(stage_num)
+    IO.print_dash()
 
 def battle(stage_num):
     max_damage  = character.get_skill_level('strength') * 2
@@ -168,14 +159,7 @@ def battle(stage_num):
             print ("You have killed it!\n")
             character.add_xp(stats[1])
 
-            print ("It appears the enemy dropped an item before disappearing into nothing.\n")
-            if random.randint(0, 1) == 1:
-                print ("Turns out to be nothing.\n")
-            else:
-                print ("You approach vicariously.\n")
-                found = inventoryManagement.find_item(stage_num)
-                if not found:
-                    print ("Turns out it was nothing...\n")
+            itemDrop(stage_num)
 
             level = character.get_level()
             print ("Your current XP is %s of %s to level %s.\n" % (character.get_xp(), config.level_table[level + 1], level + 1))
@@ -250,3 +234,13 @@ def sneak(stage_num):
         return True
     else:
         return False
+
+def itemDrop(stage_num):
+    print ("It appears the enemy dropped an item before disappearing into nothing.\n")
+    if random.randint(0, 1) == 1:
+        print ("Turns out to be nothing.\n")
+    else:
+        print ("You approach vicariously.\n")
+        found = inventoryManagement.find_item(stage_num)
+        if not found:
+            print ("Turns out it was nothing...\n")

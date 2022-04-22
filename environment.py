@@ -1,5 +1,5 @@
 import math, os
-import character, IO
+import character, config, IO
 from random import randint
 
 skillPoints = 0
@@ -182,3 +182,13 @@ def promptToggleAutosneak():
         print ("Returning to menu.\n")
     else:
         print (config.invalidResponse)
+
+def writeLevelUp(skill):
+    lines = open(IO.charFile, 'r').readlines()
+    temp = int(lines[skill + 4])
+    temp += 1
+    temp = str(temp)
+    lines[skill + 4] = "%s\n" % temp
+    out = open(IO.charFile, 'w')
+    out.writelines(lines)
+    out.close()

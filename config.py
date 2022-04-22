@@ -237,65 +237,71 @@ level_table = {
     200: 1820000
 }
 
+potionSizes = [
+    "Tiny Potion", "Little Potion", "Small Potion", "Regular Potion", "Big Potion",
+    "Large Potion", "Huge Potion", "Gigantic Potion", "Epic Potion", "Legendary Potion"
+]
+currencyName = "Gold Piece"
+
 item_table1 = {      # [ID, Value]
-    "Gold Piece":      [1,      1],
-    "Tiny Potion":     [2,      5]
+    currencyName:      [1,      1],
+    potionSizes[0]:    [2,      5]
 }
 item_table2 = {      # [ID, Value]
-    "Gold Piece":      [1,      1],
-    "Tiny Potion":     [2,      5],
-    "Little Potion":   [3,     10]
+    currencyName:      [1,      1],
+    potionSizes[0]:    [2,      5],
+    potionSizes[1]:    [3,     10]
 }
 item_table3 = {      # [ID, Value]
-    "Gold Piece":      [1,      1],
-    "Tiny Potion":     [2,      5],
-    "Little Potion":   [3,     10],
-    "Small Potion":    [4,     15],
+    currencyName:      [1,      1],
+    potionSizes[0]:    [2,      5],
+    potionSizes[1]:    [3,     10],
+    potionSizes[2]:    [4,     15],
     "Compass":         [5,     30]
 }
 item_table4 = {      # [ID, Value]
-    "Gold Piece":      [1,      1],
-    "Little Potion":   [3,     10],
-    "Small Potion":    [4,     15],
-    "Regular Potion":  [5,     25],
+    currencyName:      [1,      1],
+    potionSizes[1]:    [3,     10],
+    potionSizes[2]:    [4,     15],
+    potionSizes[3]:    [5,     25],
     "Compass":         [5,     30]
 }
 item_table5 = {      # [ID, Value]
-    "Gold Piece":      [1,      1],
-    "Small Potion":    [4,     15],
-    "Regular Potion":  [5,     25],
-    "Big Potion":      [6,     45],
+    currencyName:      [1,      1],
+    potionSizes[2]:    [4,     15],
+    potionSizes[3]:    [5,     25],
+    potionSizes[4]:    [6,     45],
     "Compass":         [5,     30]
 }
 item_table6 = {      # [ID, Value]
-    "Gold Piece":      [1,      1],
-    "Regular Potion":  [5,     25],
-    "Big Potion":      [6,     45],
-    "Large Potion":    [7,     75],
+    currencyName:      [1,      1],
+    potionSizes[3]:    [5,     25],
+    potionSizes[4]:    [6,     45],
+    potionSizes[5]:    [7,     75],
     "Compass":         [5,     30]
 }
 item_table7 = {      # [ID, Value]
-    "Gold Piece":      [1,      1],
-    "Big Potion":      [6,     45],
-    "Large Potion":    [7,     75],
-    "Huge Potion":     [8,    100],
+    currencyName:      [1,      1],
+    potionSizes[4]:    [6,     45],
+    potionSizes[5]:    [7,     75],
+    potionSizes[6]:    [8,    100],
     "Compass":         [5,     30]
 }
 item_table8 = {      # [ID, Value]
-    "Gold Piece":      [1,      1],
-    "Large Potion":    [7,     75],
-    "Huge Potion":     [8,    100],
-    "Gigantic Potion": [9,    150],
+    currencyName:      [1,      1],
+    potionSizes[5]:    [7,     75],
+    potionSizes[6]:    [8,    100],
+    potionSizes[7]:    [9,    150],
     "Compass":         [5,     30]
 }
 item_table9 = {      # [ID, Value]
-    "Gold Piece":      [1,      1],
-    "Gigantic Potion": [9,    150],
-    "Epic Potion":     [10,   500],
+    currencyName:      [1,      1],
+    potionSizes[7]:    [9,    150],
+    potionSizes[8]:    [10,   500],
     "Compass":         [5,     30]
 }
 item_table10 = {     # [ID, Value]
-    "Legendary Potion": [11, 1000]
+    potionSizes[9]: [11, 1000]
 }
 
 promptAction = "What would you like to do?"
