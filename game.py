@@ -53,13 +53,8 @@ def exploreLevel(stage_num, specific):
                 character.add_xp(config.stageXP[stage_num])
             break
 
-        print ("What would you like to do?")
-        print ("To move             'm'")
-        print ("To heal             'h'")
-        print ("To quit             'q'")
-
-        selection = input("\n")
-        print ("")
+        IO.printLevelExplore()
+        selection = IO.getSelectionFromUser(['m','h','q'],"\n")
 
         if selection == 'm':
             moved = move()
@@ -70,8 +65,6 @@ def exploreLevel(stage_num, specific):
         elif selection == 'q':
             print ("Exiting the Labyrinth.")
             break
-        else:
-            print ("Invalid Selection.\n")
     play_game()
 
 def move():

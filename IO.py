@@ -33,6 +33,14 @@ def printDebugMenu():
     print ("To create floorMap      'm'")
     print ("To return               'q'")
 
+def printSettings():
+    print ("         Settings            ")
+    print_dash()
+    print ("To Delete Character       'd'")
+    print ("To toggle autotake items  't'")
+    print ("To toggle autosneak       's'")
+    print ("To quit                   'q'")
+
 def printPlayGameOptions():
     print ("What would you like to do?")
     print ("Continue on to Labyrinth - Stage %s   \t 'c'" % character.get_stage())
@@ -132,6 +140,12 @@ def display_info():
     print ("Stage:              \t   %s" % character.get_stage())
     print ("Health:             \t   %s/%s\n" % (character.get_health(), character.get_max_health()))
 
+def printLevelExplore():
+    print ("What would you like to do?")
+    print ("To move             'm'")
+    print ("To heal             'h'")
+    print ("To quit             'q'")
+
 def printMapHint(stage_num):
     wisdom = character.get_skill_level('wisdom')
     chance = randint(0, wisdom * 3)
@@ -176,11 +190,14 @@ def getIntFromUser(prompt=""):
     print("")
     return value
 
-def getSelectionFromUser(options, prompt=""):
+def getSelectionFromUser(options, prompt="", error=""):
     while True:
         selection = input(prompt)
         if selection not in options:
-            print ("Invalid selection.\n")
+            if error != "":
+                print (error)
+            else:
+                print ("Invalid selection.\n")
         else:
             print("")
             return selection

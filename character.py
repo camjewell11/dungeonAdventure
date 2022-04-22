@@ -1,5 +1,5 @@
 import os
-import config, environment, inventoryManagement, IO
+import character, config, environment, inventoryManagement, IO
 
 def create_character():
     print ("New Character Creation")
@@ -251,9 +251,9 @@ def died():
     out = open(IO.charFile, 'w')
     out.writelines(lines)
     out.close()
-    add_xp((config.level_table[get_level_below()] - IO.playerCharacter.get_xp()))
+    add_xp((config.level_table[get_level_below()] - character.get_xp()))
     update_level()
-    set_health(IO.playerCharacter.get_max_health())
+    set_health(character.get_max_health())
 
     print ("Oh no! You have died!\nYou're XP is reset to the minimum for your level.\n")
 

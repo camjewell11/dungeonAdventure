@@ -100,7 +100,6 @@ def generate_floor(num):
     global begin
     global current
     global stop
-
     begin = [startX, startY]
     current = [startX, startY]
     stop = [exitX, exitY]
@@ -108,14 +107,15 @@ def generate_floor(num):
 def print_floor():
     print ("")
     for x in range(len(floorMap)):
+        row = ""
         for y in range(len(floorMap)):
             if x == current[0] and y == current[1]:
-                print ('O')
+                row += 'O '
             elif x == stop[0] and y == stop[1]:
-                print ('X')
+                row += 'X '
             else:
-                print ('{}'.format(floorMap[x][y]))
-        print ()
+                row += str(floorMap[x][y]) + " "
+        print (row)
     IO.print_dash(True)
 
     print ("Current: %s" % current)
@@ -125,66 +125,60 @@ def print_floor():
 def settings():
     if IO.playerCharacter == 'none':
         character.select_character()
-    while True:
-        print ("         Settings            ")
+
+    IO.printSettings()
+    selection = IO.getSelectionFromUser(['d','t','s','q'], "\n")
+
+    if selection == 'd':
+        deleteCharacter()
+    elif selection == 't':
+        promptToggleAutotake()
+    elif selection == 's':
+        promptToggleAutosneak()
+    elif selection == 'q':
+        return
+
+def deleteCharacter():
+    chars = os.listdir("characters")
+    chars.remove('.gitkeep')
+    print ("Which Character would you like to delete?")
+    spot = 0
+    for i in chars:
+        chars[spot] = i[:-4]
+        print ("- %s" % chars[spot])
+        spot += 1
+    print ("\nTo cancel                 'c'")
+
+    chars.append('c')
+    choice = IO.getSelectionFromUser(chars, "\n", "Not a valid character.")
+    if choice == 'c':
+        return
+    else:
+        os.remove("characters/%s.txt" % choice)
+        os.remove("inventories/%s.inv" % choice)
+        print ("Removed %s.\n" % choice)
         IO.print_dash()
-        print ("To Delete Character       'd'")
-        print ("To toggle autotake items  't'")
-        print ("To toggle autosneak       's'")
-        print ("To quit                   'q'")
-        selection = input("\n")
-        print ("")
 
-        if selection == 'd':
-            chars = os.listdir("characters")
-            print ("Which Character would you like to delete?")
-            spot = 0
-            for i in chars:
-                chars[spot] = i[:-4]
-                print ("- %s" % chars[spot])
-                spot += 1
-            print ("\nTo cancel                 'c'")
+def promptToggleAutotake():
+    print ("Would you like to change autotake? Currently set to %s. (y/n)" % get_autotake())
+    choice = input("\n")
+    print ("")
+    if choice == 'y':
+        toggle_autotake()
+        print ("Autotake is now %s.\n" % get_autotake())
+    elif choice == 'n':
+        print ("Returning to menu.\n")
+    else:
+        print ("Invalid Selection.\n")
 
-            while True:
-                choice = input("\n")
-                print ("")
-                if choice == 'c':
-                    break
-                elif choice not in chars:
-                    print ("%s is not a valid character." % choice)
-                    IO.print_dash(True)
-                    print ("Which Character would you like to delete?")
-                    for i in chars:
-                        print ("- %s" % i)
-                    print ("\nTo cancel            'c'")
-                else:
-                    os.remove("characters/%s.txt" % choice)
-                    os.remove("inventories/%s.inv" % choice)
-                    print ("Removed %s.\n" % choice)
-                    IO.print_dash()
-        elif selection == 't':
-            print ("Would you like to change autotake? Currently set to %s. (y/n)" % get_autotake())
-            choice = input("\n")
-            print ("")
-            if choice == 'y':
-                toggle_autotake()
-                print ("Autotake is now %s.\n" % get_autotake())
-            elif choice == 'n':
-                print ("Returning to menu.\n")
-            else:
-                print ("Invalid Selection.\n")
-        elif selection == 's':
-            print ("Would you like to change autosneak? Currently set to %s. (y/n)" % get_autosneak())
-            choice = input("\n")
-            print ("")
-            if choice == 'y':
-                toggle_autosneak()
-                print ("Autosneak is now %s.\n" % get_autosneak())
-            elif choice == 'n':
-                print ("Returning to menu.\n")
-            else:
-                print ("Invalid Selection.\n")
-        elif selection == 'q':
-            break
-        else:
-            print ("Invalid Selection.\n")
+def promptToggleAutosneak():
+    print ("Would you like to change autosneak? Currently set to %s. (y/n)" % get_autosneak())
+    choice = input("\n")
+    print ("")
+    if choice == 'y':
+        toggle_autosneak()
+        print ("Autosneak is now %s.\n" % get_autosneak())
+    elif choice == 'n':
+        print ("Returning to menu.\n")
+    else:
+        print ("Invalid Selection.\n")
