@@ -3,7 +3,7 @@ import character, config, environment, inventoryManagement, IO
 
 def play_game():
     if IO.playerCharacter == 'none':
-        IO.select_character()
+        character.select_character()
 
     environment.current = environment.begin
     environment.youDied = False
@@ -57,8 +57,7 @@ def exploreLevel(stage_num, specific):
         selection = IO.getSelectionFromUser(['m','h','q'],"\n")
 
         if selection == 'm':
-            moved = move()
-            if moved:
+            if move():
                 progress(stage_num)
         elif selection == 'h':
             character.heal()
@@ -137,19 +136,18 @@ def progress(stage_num):
         IO.print_dash()
 
 def battle(stage_num):
-    max_damage = character.get_skill_level('strength') * 2
+    max_damage  = character.get_skill_level('strength') * 2
     max_defense = character.get_skill_level('defense') * 2
-    accuracy = character.get_skill_level('accuracy') * 2
-    luck = character.get_skill_level('luck')
+    accuracy    = character.get_skill_level('accuracy') * 2
+    luck        = character.get_skill_level('luck')
 
     turn = random.randint(1, 2)
     fled = False
 
     while True:
         opponent = random.choice(list(config.enemy_table.keys()))
-        if config.enemy_table[opponent][0] <= stage_num:
-            if config.enemy_table[opponent][0] > stage_num - 5:
-                break
+        if config.enemy_table[opponent][0] <= stage_num and config.enemy_table[opponent][0] > stage_num - 5:
+            break
 
     stats = config.enemy_table[opponent]
 
@@ -183,69 +181,65 @@ def battle(stage_num):
             print ("Your current XP is %s of %s to level %s.\n" % (character.get_xp(), config.level_table[level + 1], level + 1))
             break
         if turn == 1:
-            while True:
-                print ("You have %s health.             %s has %s health.\n" % (health, opponent, enemy_health))
-
-                print ("What would you like to do?\n")
-                print ("Attack               'a'")
-                print ("Heal                 'h'")
-                print ("Flee                 'f'")
-                choice = input("\n")
-                print ("")
-
-                if choice == 'a':
-                    print ("You attack!\n")
-                    hits = random.randint(1, accuracy * 2)
-                    if hits > stats[0]:
-                        if random.randint(0, luck) > random.randint(0, stage_num * 2):
-                            print ("You land a critical strike!\n")
-                            damage = random.randint(max_damage / 2, max_damage) * 2
-                        else:
-                            damage = random.randint(1, max_damage)
-                        print ("You deal %s damage!\n" % damage)
-                        enemy_health -= damage
-                    else:
-                        print ("Your attack misses!\n")
-
-                    # select([sys.stdin], [], [], 1)
-
-                    IO.print_dash(True)
-                    break
-                elif choice == 'h':
-                    character.heal()
-                    break
-                elif choice == 'f':
-                    print ("You attempt to flee!\n")
-                    if random.randint(character.get_skill_level('stealth') / 2, character.get_skill_level('stealth')) > random.randint(0, stage_num * 2):
-                        print ("You get away safely...\n")
-                        fled = True
-                    else:
-                        print ("You cannot get away!\n")
-                    IO.print_dash()
-                    break
-                else:
-                    print ("Invalid Selection.\n")
+            print ("You have %s health.             %s has %s health.\n" % (health, opponent, enemy_health))
+            enemy_health, fled = makeYourMove(stage_num, accuracy, luck, max_damage, stats, enemy_health)
             turn = 2
-        elif fled:
-            break
         elif turn == 2:
-            print ("The %s attacks!\n" % opponent)
-            if random.randint(0, max_defense) > random.randint(0, enemy_max_damage):
-                print ("You blocked the attack!\n")
-            else:
-                if random.randint(1, 5) > 4:
-                    print ("On no! A critical hit!\n")
-                    damage = random.randint(enemy_max_damage / 2, enemy_max_damage) * 2
-                else:
-                    damage = random.randint(1, enemy_max_damage)
-                print ("The %s deals %s damage!\n" % (opponent, damage))
-                health -= damage
-                character.set_health(health)
-
-            # select.select([sys.stdin], [], [], 1)
-
+            enemyMove(opponent, max_defense, enemy_max_damage)
             IO.print_dash()
             turn = 1
+        if fled:
+            break
+
+def makeYourMove(stage_num, accuracy, luck, max_damage, stats, enemy_health):
+    print ("What would you like to do?\n")
+    print ("Attack               'a'")
+    print ("Heal                 'h'")
+    print ("Flee                 'f'")
+    choice = IO.getSelectionFromUser(['a','h','f'], "\n")
+
+    fled = False
+    if choice == 'a':
+        print ("You attack!\n")
+        hits = random.randint(1, accuracy * 2)
+        if hits > stats[0]:
+            if random.randint(0, luck) > random.randint(0, stage_num * 2):
+                print ("You land a critical strike!\n")
+                damage = random.randint(max_damage / 2, max_damage) * 2
+            else:
+                damage = random.randint(1, max_damage)
+            print ("You deal %s damage!\n" % damage)
+            enemy_health -= damage
+        else:
+            print ("Your attack misses!\n")
+
+        IO.print_dash(True)
+    elif choice == 'h':
+        character.heal()
+    elif choice == 'f':
+        print ("You attempt to flee!\n")
+        if random.randint(character.get_skill_level('stealth') / 2, character.get_skill_level('stealth')) > random.randint(0, stage_num * 2):
+            print ("You get away safely...\n")
+            fled = True
+        else:
+            print ("You cannot get away!\n")
+        IO.print_dash()
+
+    return enemy_health, fled
+
+def enemyMove(opponent, max_defense, enemy_max_damage):
+    print ("The %s attacks!\n" % opponent)
+    if random.randint(0, max_defense) > random.randint(0, enemy_max_damage):
+        print ("You blocked the attack!\n")
+    else:
+        if random.randint(1, 5) > 4:
+            print ("On no! A critical hit!\n")
+            damage = random.randint(enemy_max_damage / 2, enemy_max_damage) * 2
+        else:
+            damage = random.randint(1, enemy_max_damage)
+        print ("The %s deals %s damage!\n" % (opponent, damage))
+        health -= damage
+        character.set_health(health)
 
 def sneak(stage_num):
     randy = random.randint(1, stage_num)
