@@ -149,7 +149,6 @@ def deleteCharacter():
         spot += 1
     print ("\nTo cancel                 'c'")
 
-    chars.append('c')
     choice = IO.getSelectionFromUser(chars, "\n", "Not a valid character.")
     if choice == 'c':
         return

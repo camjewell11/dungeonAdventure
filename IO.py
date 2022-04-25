@@ -81,6 +81,19 @@ def printShopOffers():
     print ("To quit                  'q'")
     print ("You have %s gold." % inventoryManagement.has_item(config.currencyName))
 
+def printInventory():
+    items = []
+    f = open(inventoryFile, 'r')
+    for i, line in enumerate(f):
+        if i > 1:
+            spot = line.index(':')
+            item = line[:spot]
+            quantity = line[spot + 1:-1]
+            cost = inventoryManagement.get_cost(item)
+            print ("%s \t-\t %s      \t%s gold" % (item, quantity, cost))
+            items.append(item)
+    return items
+
 def display_faction_stats():
     while True:
         print ("Which faction would you like to view?")
@@ -227,7 +240,10 @@ def printSneak(stage_num, randy):
 def getIntFromUser(prompt=""):
     while True:
         try:
-            value = int(input(prompt))
+            value = input(prompt)
+            if value == 'q':
+                break
+            value = int(value)
         except ValueError:
             print ("That wasn't a number!")
         else:
@@ -236,6 +252,8 @@ def getIntFromUser(prompt=""):
     return value
 
 def getSelectionFromUser(options, prompt="", error=""):
+    options.append('q')
+    options.append('c')
     while True:
         selection = input(prompt)
         if selection not in options:
