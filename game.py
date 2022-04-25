@@ -32,7 +32,6 @@ def play_game():
         play_game()
     elif selection == 'i':
         IO.display_info()
-        IO.print_dash()
         play_game()
     elif selection == 'q':
         return
@@ -72,6 +71,7 @@ def exploreLevel(stage_num, specific):
         return
     exploreLevel(stage_num, specific)
 
+# navigate the floor via up, down, left, and right commands
 def move():
     IO.printMoveDirection()
     selection = IO.getSelectionFromUser(['u','r','d','l','c'], "\n")
@@ -108,6 +108,7 @@ def move():
         return False
     return True
 
+# prompt with sneak option; enter battle on failed sneak
 def progress(stage_num):
     count = 0
     while True:
@@ -133,28 +134,31 @@ def progress(stage_num):
     battle(stage_num)
     IO.print_dash()
 
+# battle script; repeats until fled or one member is killed
 def battle(stage_num):
     max_damage  = character.get_skill_level('strength') * 2
     max_defense = character.get_skill_level('defense') * 2
     accuracy    = character.get_skill_level('accuracy') * 2
     luck        = character.get_skill_level('luck')
 
+    # pick opponent based on floor
     while True:
         opponent = random.choice(list(config.enemy_table.keys()))
         if config.enemy_table[opponent][0] <= stage_num and config.enemy_table[opponent][0] > stage_num - 5:
             break
 
-    stats = config.enemy_table[opponent]
-
     print ("You've entered battle with a %s.\n" % opponent)
+    stats = config.enemy_table[opponent]
     health = character.get_health()
     enemy_health = random.randint(stats[2], stats[3])
     enemy_max_damage = stats[4]
 
+    # either you or the opponent begins
     turn = random.randint(1, 2)
     if turn == 2:
         print ("You have %s health.             %s has %s health.\n" % (health, opponent, enemy_health))
 
+    # main battle loop
     fled = False
     while True:
         if health <= 0:
@@ -169,17 +173,18 @@ def battle(stage_num):
             level = character.get_level()
             print ("Your current XP is %s of %s to level %s.\n" % (character.get_xp(), config.level_table[level + 1], level + 1))
             break
-        if turn == 1:
+        if turn == 1: # your turn
             print ("You have %s health.             %s has %s health.\n" % (health, opponent, enemy_health))
             enemy_health, fled = makeYourMove(stage_num, accuracy, luck, max_damage, stats, enemy_health)
             turn = 2
-        elif turn == 2:
+        elif turn == 2: # opponent turn
             health = enemyMove(health, opponent, max_defense, enemy_max_damage)
             IO.print_dash()
             turn = 1
         if fled:
             break
 
+# choose from action options; attack, heal, or flea
 def makeYourMove(stage_num, accuracy, luck, max_damage, stats, enemy_health):
     print ("What would you like to do?\n")
     print ("Attack               'a'")
@@ -216,6 +221,7 @@ def makeYourMove(stage_num, accuracy, luck, max_damage, stats, enemy_health):
 
     return enemy_health, fled
 
+# opponent attacks
 def enemyMove(health, opponent, max_defense, enemy_max_damage):
     print ("The %s attacks!\n" % opponent)
     if random.randint(0, max_defense) > random.randint(0, enemy_max_damage):
@@ -231,6 +237,7 @@ def enemyMove(health, opponent, max_defense, enemy_max_damage):
         character.set_health(health)
     return health
 
+# generate sneak success randomly based on stealth skill and chance
 def sneak(stage_num):
     randy = random.randint(1, stage_num)
     quiet = random.randint(0, 2)
@@ -241,6 +248,7 @@ def sneak(stage_num):
     else:
         return False
 
+# generate item; 50-50 chance, followed by 1 in 3 chance
 def itemDrop(stage_num):
     print ("It appears the enemy dropped an item before disappearing into nothing.\n")
     if random.randint(0, 1) == 1:

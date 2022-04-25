@@ -1,6 +1,7 @@
 import random
 import character, config, environment, IO
 
+# returns quantity of specified item or false if none
 def has_item(item):
     f = open(IO.inventoryFile, "r")
     quantity = -1
@@ -14,6 +15,7 @@ def has_item(item):
 
     return quantity
 
+# adds num of item to inventory file for selected character
 def add_item(item, num):
     line_num = 0
     quantity = 0
@@ -36,6 +38,8 @@ def add_item(item, num):
         with open(IO.inventoryFile, 'a') as f:
             f.write("%s:%s\n" % (str(item), str(num)))
 
+# removes num of item from inventory file for selected character
+# if new quantity is zero, delete the item from file entirely
 def remove_item(item, numToSell=1):
     line_num = 0
     quantity = 0
@@ -61,6 +65,7 @@ def remove_item(item, numToSell=1):
         out.writelines(lines)
         out.close()
 
+# present buy and sell options for furthest unlocked stage
 def shop():
     print ("Welcome to the General Store!")
     print ("Here you can find all sorts of goodies and unload some of your pack.\n")
@@ -77,6 +82,7 @@ def shop():
         else:
             print (config.invalidResponse)
 
+# prompt user to sell which item and how many
 def sellItem():
     print ("You have %s gold." % has_item(config.currencyName))
     print ("")
@@ -115,6 +121,7 @@ def sellItem():
         elif num == 'q':
             return
 
+# prompt user to buy which item and how many
 def buyItem():
     print ("We have lots to offer!\n")
     items = IO.printShopOffers()
@@ -132,12 +139,14 @@ def buyItem():
         add_item(item, 1)
         remove_item(config.currencyName, cost)
 
+# returns properly capitalized item from available items
 def getItemFromItems(choice, items):
     for option in items:
         if option.lower() == choice.lower():
             return option
     return False
 
+# display items available depending on which stage has been reached
 def offer_items(stage_num):
     costPrompt = "%s \t-\t %d gold"
     items = []
@@ -177,6 +186,7 @@ def offer_items(stage_num):
 
     return items
 
+# random chance at finding item based on current floor
 def find_item(stage_num):
     chance = random.randint(0, 2)
     if chance == 2:
@@ -196,6 +206,7 @@ def find_item(stage_num):
         return False
     return True
 
+# display to user to take item; take automatically if setting enabled
 def promptTakeItem(amountGold, item):
     if not environment.autotake:
         print ("Would you like to take it? (y/n)")
@@ -209,6 +220,7 @@ def promptTakeItem(amountGold, item):
     else:
         print ("You left it behind.\n")
 
+# returns random item from possible items for stage
 def getItemFromStage(stage_num):
     randy = random.randint(0, character.get_skill_level('luck'))
     if randy > 75 and stage_num > 25:
@@ -233,6 +245,7 @@ def getItemFromStage(stage_num):
         return False
     return item
 
+# returns value of item
 def get_cost(item):
     if item in config.item_table1:
         return config.item_table1[item][1]

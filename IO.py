@@ -173,11 +173,13 @@ def display_info():
     print ("Faction:            \t   %s" % faction)
     print ("Character File:     \t   %s" % charFile)
     print ("Inventory File:     \t   %s" % inventoryFile)
+    print ("")
     display_skills()
     print ("Total XP:           \t   %s/%s" % (character.get_xp(), config.level_table[character.get_level_below() + 1]))
-    print ("Deaths:             \t   %s" % character.get_deaths())
-    print ("Stage:              \t   %s" % character.get_stage())
-    print ("Health:             \t   %s/%s\n" % (character.get_health(), character.get_max_health()))
+    print ("Deaths:             \t   %s"    %  character.get_deaths())
+    print ("Stage:              \t   %s"    %  character.get_stage())
+    print ("Health:             \t   %s/%s" % (character.get_health(), character.get_max_health()))
+    print_dash(True)
 
 def printLevelExplore():
     print (config.promptAction)
