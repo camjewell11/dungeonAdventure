@@ -286,7 +286,7 @@ def level_up():
         skill = 6
         print ("Leveled up Luck!\n")
 
-    environment.writeLevelUp(skill)
+    writeLevelUp(skill)
     add_health()
     set_health(get_max_health())
 

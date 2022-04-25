@@ -1,6 +1,7 @@
 import random
 import character, config, environment, inventoryManagement, IO
 
+# recursively called to present player with continue, stage selection, info, and shop prompts
 def play_game():
     if IO.playerCharacter == 'none':
         character.select_character()
@@ -41,30 +42,31 @@ def play_game():
     exploreLevel(stage_num, specific)
     play_game() # repeat until quit
 
+# begins gameplay, explore a generated floor using move and heal commands
 def exploreLevel(stage_num, specific):
-    while True:
-        if environment.youDied:
-            break
-        elif environment.current[0] == environment.stop[0] and environment.current[1] == environment.stop[1]:
-            IO.printEscape()
-            if not specific:
-                character.add_stage()
-                print ("You are awarded %d xp for this feat!\n" % config.stageXP[stage_num])
-                character.add_xp(config.stageXP[stage_num])
-            break
+    if environment.youDied:
+        return
+    elif environment.current[0] == environment.stop[0] and environment.current[1] == environment.stop[1]:
+        IO.printEscape()
+        if not specific:
+            character.add_stage()
+            print ("You are awarded %d xp for this feat!\n" % config.stageXP[stage_num])
+            character.add_xp(config.stageXP[stage_num])
+        return
 
-        IO.printLevelExplore()
-        selection = IO.getSelectionFromUser(['m','h','q'],"\n")
+    IO.printLevelExplore()
+    selection = IO.getSelectionFromUser(['m','h','q'],"\n")
 
-        if selection == 'm':
-            # able to move and item not found
-            if move() and not inventoryManagement.find_item(stage_num):
-                progress(stage_num)
-        elif selection == 'h':
-            character.heal()
-        elif selection == 'q':
-            print ("Exiting the Labyrinth.")
-            break
+    if selection == 'm':
+        # able to move and item not found
+        if move() and not inventoryManagement.find_item(stage_num):
+            progress(stage_num)
+    elif selection == 'h':
+        character.heal()
+    elif selection == 'q':
+        print ("Exiting the Labyrinth.")
+        return
+    exploreLevel(stage_num, specific)
 
 def move():
     IO.printMoveDirection()
@@ -111,7 +113,8 @@ def progress(stage_num):
             print ("")
         randy = random.randint(0, 2)
         if environment.autosneak or choice == 'y':
-            IO.printSneak(stage_num, randy)
+            if IO.printSneak(stage_num):
+                return
             break
         elif choice == 'n':
             print (config.noSneakOptions[randy])

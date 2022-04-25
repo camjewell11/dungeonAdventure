@@ -168,23 +168,27 @@ def find_item(stage_num):
             print ("You found %s Gold Pieces." % amountGold)
         elif item:
             print ("You found a %s.\n" % item)
+        elif item == False:
+            return
 
-        if not environment.autotake:
-            print ("Would you like to take it? (y/n)")
-            choice = input("\n")
-            print ("")
-        if environment.autotake or choice == 'y':
-            if amountGold > 1:
-                print ("You take the gold.\n")
-            else:
-                print ("You take the %s.\n" % item)
-        else:
-            print ("You left it behind.\n")
-
+        promptTakeItem(amountGold, item)
         add_item(item, amountGold)
     else:
         return False
     return True
+
+def promptTakeItem(amountGold, item):
+    if not environment.autotake:
+        print ("Would you like to take it? (y/n)")
+        choice = input("\n")
+        print ("")
+    if environment.autotake or choice == 'y':
+        if amountGold > 1:
+            print ("You take the gold.\n")
+        else:
+            print ("You take the %s.\n" % item)
+    else:
+        print ("You left it behind.\n")
 
 def getItemFromStage(stage_num):
     randy = random.randint(0, character.get_skill_level('luck'))

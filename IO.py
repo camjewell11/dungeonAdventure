@@ -1,4 +1,4 @@
-from random import randint
+import random
 import character, config, environment, game, inventoryManagement
 
 playerCharacter = "none"
@@ -200,12 +200,12 @@ def printSkillUpgrade():
 
 def printMapHint(stage_num):
     wisdom = character.get_skill_level('wisdom')
-    chance = randint(0, wisdom * 3)
+    chance = random.randint(0, wisdom * 3)
 
     if chance > stage_num:
         direction = getDirectionFromCurrentPosition()
 
-        randy = randint(0, 2)
+        randy = random.randint(0, 2)
         print (config.directionalMessages[randy] % direction)
 
 def getDirectionFromCurrentPosition():
@@ -231,11 +231,14 @@ def getDirectionFromCurrentPosition():
             direction = "east"
     return direction
 
-def printSneak(stage_num, randy):
+def printSneak(stage_num):
+    randy = random.randint(0, 2)
     if game.sneak(stage_num):
         print (config.sneakOptions[randy])
+        return True
     else:
         print (config.failedSneakOptions[randy])
+        return False
 
 def getIntFromUser(prompt=""):
     while True:
@@ -255,7 +258,7 @@ def getSelectionFromUser(options, prompt="", error=""):
     options.append('q')
     options.append('c')
     while True:
-        selection = input(prompt)
+        selection = input(prompt).lower()
         if selection not in options:
             if error != "":
                 print (error)
