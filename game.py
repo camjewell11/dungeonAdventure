@@ -4,7 +4,11 @@ import character, config, environment, inventoryManagement, IO
 # recursively called to present player with continue, stage selection, info, and shop prompts
 def play_game():
     if IO.playerCharacter == 'none':
-        character.select_character()
+        loaded = character.select_character()
+    else:
+        loaded = True
+    if not loaded:
+        return
 
     environment.current = environment.begin
     environment.youDied = False
@@ -170,7 +174,7 @@ def battle(stage_num):
             enemy_health, fled = makeYourMove(stage_num, accuracy, luck, max_damage, stats, enemy_health)
             turn = 2
         elif turn == 2:
-            enemyMove(opponent, max_defense, enemy_max_damage)
+            health = enemyMove(health, opponent, max_defense, enemy_max_damage)
             IO.print_dash()
             turn = 1
         if fled:
@@ -212,7 +216,7 @@ def makeYourMove(stage_num, accuracy, luck, max_damage, stats, enemy_health):
 
     return enemy_health, fled
 
-def enemyMove(opponent, max_defense, enemy_max_damage):
+def enemyMove(health, opponent, max_defense, enemy_max_damage):
     print ("The %s attacks!\n" % opponent)
     if random.randint(0, max_defense) > random.randint(0, enemy_max_damage):
         print ("You blocked the attack!\n")
@@ -225,6 +229,7 @@ def enemyMove(opponent, max_defense, enemy_max_damage):
         print ("The %s deals %s damage!\n" % (opponent, damage))
         health -= damage
         character.set_health(health)
+    return health
 
 def sneak(stage_num):
     randy = random.randint(1, stage_num)

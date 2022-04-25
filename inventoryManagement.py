@@ -28,7 +28,7 @@ def add_item(item, num):
 
         lines = open(IO.inventoryFile, 'r').readlines()
         quantity += num
-        lines[line_num] = item + ":" + quantity + "\n"
+        lines[line_num] = item + ":" + str(quantity) + "\n"
         out = open(IO.inventoryFile, 'w')
         out.writelines(lines)
         out.close()
@@ -36,10 +36,13 @@ def add_item(item, num):
         with open(IO.inventoryFile, 'a') as f:
             f.write("%s:%s\n" % (str(item), str(num)))
 
-def remove_item(item, num=1):
+def remove_item(item, numToSell=1):
     line_num = 0
     quantity = 0
-    if has_item(item) > 0:
+    currentQuantity = has_item(item)
+    newQuantity = currentQuantity - numToSell
+
+    if currentQuantity > 0:
         f = open(IO.inventoryFile, "r")
         for i, line in enumerate(f):
             if item in line:
@@ -49,8 +52,11 @@ def remove_item(item, num=1):
         f.close()
 
         lines = open(IO.inventoryFile, 'r').readlines()
-        quantity -= num
-        lines[line_num] = "%s:%s\n" % (item, quantity)
+        quantity -= numToSell
+        if newQuantity == 0:
+            del lines[line_num]
+        else:
+            lines[line_num] = "%s:%s\n" % (item, quantity)
         out = open(IO.inventoryFile, 'w')
         out.writelines(lines)
         out.close()
@@ -72,12 +78,18 @@ def shop():
             print (config.invalidResponse)
 
 def sellItem():
+    print ("You have %s gold." % has_item(config.currencyName))
+    print ("")
     print ("What would you like to sell?")
     items = IO.printInventory()
-
     print ("\nTo quit                         'q'")
-    print ("You have %s gold." % has_item(config.currencyName))
+
     item = IO.getSelectionFromUser(items, "")
+    item = getItemFromItems(item, items)
+
+    if not item:
+        print (config.invalidResponse)
+        sellItem()
 
     if item == 'q':
         return
@@ -107,52 +119,59 @@ def buyItem():
     print ("We have lots to offer!\n")
     items = IO.printShopOffers()
     items.append('q')
-    item = IO.getSelectionFromUser(items)
+    item = IO.getSelectionFromUser(items, "")
 
     if item == 'q':
         return
-    elif item not in items:
+    elif not getItemFromItems(item, items):
         print ("That is not an item for sale.\n")
     else:
+        item = getItemFromItems(item, items)
         cost = int(get_cost(item)*1.2)
         print ("You bought a %s for %s gold.\n" % (item, cost))
         add_item(item, 1)
         remove_item(config.currencyName, cost)
 
+def getItemFromItems(choice, items):
+    for option in items:
+        if option.lower() == choice.lower():
+            return option
+    return False
+
 def offer_items(stage_num):
-    costPrompt = "%s \t-\t %s gold"
+    costPrompt = "%s \t-\t %d gold"
     items = []
-    print (    costPrompt % config.potionSizes[0], int(get_cost(config.potionSizes[0])*1.2))
+    print (    costPrompt % (config.potionSizes[0], int(get_cost(config.potionSizes[0])*1.2)))
     items.append(config.potionSizes[0])
     if stage_num > 1:
-        print (costPrompt % config.potionSizes[1], int(get_cost(config.potionSizes[1])*1.2))
+        print (costPrompt % (config.potionSizes[1], int(get_cost(config.potionSizes[1])*1.2)))
         items.append(config.potionSizes[1])
     if stage_num > 3:
-        print (costPrompt % config.potionSizes[2], int(get_cost(config.potionSizes[2])*1.2))
+        print (costPrompt % (config.potionSizes[2], int(get_cost(config.potionSizes[2])*1.2)))
         items.append(config.potionSizes[2])
     if stage_num > 6:
-        print (costPrompt % config.potionSizes[3], int(get_cost(config.potionSizes[3])*1.2))
+        print (costPrompt % (config.potionSizes[3], int(get_cost(config.potionSizes[3])*1.2)))
         items.append(config.potionSizes[3])
     if stage_num > 8:
         print ("Compass \t\t-\t %s gold" % int(get_cost('Compass')*1.2))
         items.append("Compass")
     if stage_num > 10:
-        print (costPrompt % config.potionSizes[4], int(get_cost(config.potionSizes[4])*1.2))
+        print (costPrompt % (config.potionSizes[4], int(get_cost(config.potionSizes[4])*1.2)))
         items.append(config.potionSizes[4])
     if stage_num > 14:
-        print (costPrompt % config.potionSizes[5], int(get_cost(config.potionSizes[5])*1.2))
+        print (costPrompt % (config.potionSizes[5], int(get_cost(config.potionSizes[5])*1.2)))
         items.append(config.potionSizes[5])
     if stage_num > 18:
-        print (costPrompt % config.potionSizes[6], int(get_cost(config.potionSizes[6])*1.2))
+        print (costPrompt % (config.potionSizes[6], int(get_cost(config.potionSizes[6])*1.2)))
         items.append(config.potionSizes[6])
     if stage_num > 22:
-        print (costPrompt % config.potionSizes[7], int(get_cost(config.potionSizes[7])*1.2))
+        print (costPrompt % (config.potionSizes[7], int(get_cost(config.potionSizes[7])*1.2)))
         items.append(config.potionSizes[7])
     if stage_num > 26:
-        print (costPrompt % config.potionSizes[8], int(get_cost(config.potionSizes[8])*1.2))
+        print (costPrompt % (config.potionSizes[8], int(get_cost(config.potionSizes[8])*1.2)))
         items.append(config.potionSizes[8])
     if stage_num >= 30:
-        print (costPrompt % config.potionSizes[9], int(get_cost(config.potionSizes[9], )*1.2))
+        print (costPrompt % (config.potionSizes[9], int(get_cost(config.potionSizes[9], )*1.2)))
         items.append(config.potionSizes[9])
     print ("")
 
@@ -193,23 +212,23 @@ def promptTakeItem(amountGold, item):
 def getItemFromStage(stage_num):
     randy = random.randint(0, character.get_skill_level('luck'))
     if randy > 75 and stage_num > 25:
-        item = random.choice(list(config.item_table9.items()))
+        item, _ = random.choice(list(config.item_table9.items()))
     elif randy > 50 and stage_num > 20:
-        item = random.choice(list(config.item_table8.items()))
+        item, _ = random.choice(list(config.item_table8.items()))
     elif randy > 45 and stage_num > 16:
-        item = random.choice(list(config.item_table7.items()))
+        item, _ = random.choice(list(config.item_table7.items()))
     elif randy > 35 and stage_num > 12:
-        item = random.choice(list(config.item_table6.items()))
+        item, _ = random.choice(list(config.item_table6.items()))
     elif randy > 25 and stage_num > 8:
-        item = random.choice(list(config.item_table5.items()))
+        item, _ = random.choice(list(config.item_table5.items()))
     elif randy > 15 and stage_num > 4:
-        item = random.choice(list(config.item_table4.items()))
+        item, _ = random.choice(list(config.item_table4.items()))
     elif randy > 10 and stage_num > 3:
-        item = random.choice(list(config.item_table3.items()))
+        item, _ = random.choice(list(config.item_table3.items()))
     elif randy > 5 and stage_num > 2:
-        item = random.choice(list(config.item_table2.items()))
+        item, _ = random.choice(list(config.item_table2.items()))
     elif randy > 3 and stage_num > 1:
-        item = random.choice(list(config.item_table1.items()))
+        item, _ = random.choice(list(config.item_table1.items()))
     else:
         return False
     return item

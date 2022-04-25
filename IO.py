@@ -68,18 +68,20 @@ def printMoveDirection():
     print ("To cancel            'c'")
 
 def printShopPrompt():
+    print ("You have %s gold." % inventoryManagement.has_item(config.currencyName))
+    print ("")
     print (config.promptAction)
     print ("To sell                's'")
     print ("To buy                 'b'")
     print ("To quit                'q'")
-    print ("")
-    print ("You have %s gold." % character.has_item(config.currencyName))
 
 def printShopOffers():
-    print ("What would you like to buy?\n")
-    inventoryManagement.offer_items(character.get_stage())
-    print ("To quit                  'q'")
     print ("You have %s gold." % inventoryManagement.has_item(config.currencyName))
+    print ("")
+    print ("What would you like to buy?\n")
+    items = inventoryManagement.offer_items(character.get_stage())
+    print ("To quit                  'q'")
+    return items
 
 def printInventory():
     items = []
@@ -259,7 +261,7 @@ def getSelectionFromUser(options, prompt="", error=""):
     options.append('c')
     while True:
         selection = input(prompt).lower()
-        if selection not in options:
+        if selection not in [x.lower() for x in options]:
             if error != "":
                 print (error)
             else:

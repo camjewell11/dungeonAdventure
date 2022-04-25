@@ -37,11 +37,11 @@ def create_character():
             print ("Created new character, %s!" % name)
             IO.print_dash(True)
 
-    playerCharacter = name
+    IO.playerCharacter = name
     IO.charFile = filename
-    inventoryFile = "inventories/" + playerCharacter + ".inv"
+    IO.inventoryFile = "inventories/" + IO.playerCharacter + ".inv"
 
-    f = open(inventoryFile, "w")
+    f = open(IO.inventoryFile, "w")
     f.write("Inventory\n")
     f.write("Gold Pieces:0\n")
     f.close()
@@ -56,18 +56,18 @@ def select_character():
     for i in chars:
         chars[spot] = i[:-4]
         print ("- %s" % chars[spot])
-        chars[spot] = chars[spot].lower()
         spot += 1
     print ("\nTo cancel            'c'")
 
     choice = IO.getSelectionFromUser(chars, "\n")
-    if choice not in chars:
+    if choice.lower() not in [x.lower() for x in chars]:
         print ("%s is not a valid character." % choice)
         IO.print_dash(True)
         print ("Which Character would you like to play as?")
         for i in chars:
             print ("- %s" % i)
     elif choice != 'c':
+        choice = getCharFromChars(choice, chars)
         print ("\nNow playing as %s." % choice)
         IO.print_dash(True)
 
@@ -77,6 +77,9 @@ def select_character():
         IO.faction = get_faction()
         environment.set_autotake()
         environment.set_autosneak()
+        return True
+    else:
+        return False
 
 # writes new files containing character name, faction, stats, and status
 # varies between classes only in stating stats
@@ -100,6 +103,22 @@ def createClass(filename, faction):
     f.write("Health\n100\n100\n")
     f.write("Settings - TS\n0\n0\n")
     f.close()
+
+# returns properly capitalized character name
+def getCharFromChars(choice, chars):
+    for option in chars:
+        if option.lower() == choice.lower():
+            return option
+
+# returns name of currently selected character
+def get_name():
+    output = 0
+    f = open(IO.charFile, "r")
+    for i, line in enumerate(f):
+        if i == 0:
+            output = int(line[:-1])
+    f.close()
+    return output
 
 # returns level of currently selected character
 def get_level():
