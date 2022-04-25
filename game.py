@@ -141,8 +141,8 @@ def battle(stage_num):
 
     print ("You've entered battle with a %s.\n" % opponent)
     health = character.get_health()
-    enemy_health = stats[2]
-    enemy_max_damage = stats[3]
+    enemy_health = random.randint(stats[2], stats[3])
+    enemy_max_damage = stats[4]
 
     turn = random.randint(1, 2)
     if turn == 2:
