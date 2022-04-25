@@ -132,9 +132,6 @@ def battle(stage_num):
     accuracy    = character.get_skill_level('accuracy') * 2
     luck        = character.get_skill_level('luck')
 
-    turn = random.randint(1, 2)
-    fled = False
-
     while True:
         opponent = random.choice(list(config.enemy_table.keys()))
         if config.enemy_table[opponent][0] <= stage_num and config.enemy_table[opponent][0] > stage_num - 5:
@@ -147,9 +144,11 @@ def battle(stage_num):
     enemy_health = stats[2]
     enemy_max_damage = stats[3]
 
+    turn = random.randint(1, 2)
     if turn == 2:
         print ("You have %s health.             %s has %s health.\n" % (health, opponent, enemy_health))
 
+    fled = False
     while True:
         if health <= 0:
             environment.youDied = True
@@ -158,7 +157,6 @@ def battle(stage_num):
         if enemy_health <= 0:
             print ("You have killed it!\n")
             character.add_xp(stats[1])
-
             itemDrop(stage_num)
 
             level = character.get_level()
@@ -218,7 +216,7 @@ def enemyMove(opponent, max_defense, enemy_max_damage):
     else:
         if random.randint(1, 5) > 4:
             print ("On no! A critical hit!\n")
-            damage = random.randint(enemy_max_damage / 2, enemy_max_damage) * 2
+            damage = random.randint(int(enemy_max_damage / 2), enemy_max_damage) * 2
         else:
             damage = random.randint(1, enemy_max_damage)
         print ("The %s deals %s damage!\n" % (opponent, damage))

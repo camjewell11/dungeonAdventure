@@ -53,32 +53,27 @@ def select_character():
     for i in chars:
         chars[spot] = i[:-4]
         print ("- %s" % chars[spot])
+        chars[spot] = chars[spot].lower()
         spot += 1
     print ("\nTo cancel            'c'")
 
-    while True:
-        choice = input("\n")
-        print ("")
-        if choice == 'c':
-            break
-        elif choice not in chars:
-            print ("%s is not a valid character." % choice)
-            IO.print_dash(True)
-            print ("Which Character would you like to play as?")
-            for i in chars:
-                print ("- %s" % i)
-        else:
-            print ("\nNow playing as %s." % choice)
-            IO.print_dash(True)
+    choice = IO.getSelectionFromUser(chars, "\n")
+    if choice not in chars:
+        print ("%s is not a valid character." % choice)
+        IO.print_dash(True)
+        print ("Which Character would you like to play as?")
+        for i in chars:
+            print ("- %s" % i)
+    elif choice != 'c':
+        print ("\nNow playing as %s." % choice)
+        IO.print_dash(True)
 
-            IO.playerCharacter = choice
-            IO.charFile = "characters/%s.txt" % choice
-            IO.inventoryFile = "inventories/%s.inv" % choice
-            IO.faction = get_faction()
-            environment.set_autotake()
-            environment.set_autosneak()
-
-            break
+        IO.playerCharacter = choice
+        IO.charFile = "characters/%s.txt" % choice
+        IO.inventoryFile = "inventories/%s.inv" % choice
+        IO.faction = get_faction()
+        environment.set_autotake()
+        environment.set_autosneak()
 
 def createClass(filename, faction):
     f = open(filename, "a")
