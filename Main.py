@@ -1,5 +1,6 @@
 import character, config, environment, game, IO
 
+# loop for main menu; character selection/creation, settings, and play
 def start():
     while True:
         IO.printMainMenu()
@@ -24,6 +25,7 @@ def start():
         else:
             print ("That was not a valid selection.\n")
 
+# secret menu to test functionality without having to play the game
 def debug_menu():
     while True:
         IO.printDebugMenu()

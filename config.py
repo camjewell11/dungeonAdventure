@@ -34,6 +34,8 @@ enemy_table = {           # [ID,  xp,  health min/max, damage]
     "Bear":                 [15, 500,       150,  200,  18]
 }
 
+# xp required to reach level; max level 200
+# TODO refactor to use an equation rather than static values
 level_table = {
     1: 0,
     2: 50,
@@ -237,12 +239,15 @@ level_table = {
     200: 1820000
 }
 
+# dictionary of available potions
 potionSizes = [
     "Tiny Potion", "Little Potion", "Small Potion", "Regular Potion", "Big Potion",
     "Large Potion", "Huge Potion", "Gigantic Potion", "Epic Potion", "Legendary Potion"
 ]
 currencyName = "Gold Pieces"
 
+# item table # for which floor you can find which items
+# also specific what can be bought in the shop once you have unlocked a stage
 item_table1 = {      # [ID, Value]
     currencyName:      [1,      1],
     potionSizes[0]:    [2,      5]
@@ -304,6 +309,7 @@ item_table10 = {     # [ID, Value]
     potionSizes[9]: [11, 1000]
 }
 
+# static text; reused in multiple functions (IO)
 promptAction = "What would you like to do?"
 invalidResponse = "Invalid selection.\n"
 
@@ -329,6 +335,7 @@ noSneakOptions = [
     "You're in for it now!\n"
 ]
 
+# xp awarded for each stage; 30 stages currently
 stageXP = [
     50, 100, 150, 250, 500, 750, 1000, 1500, 2000, 2500, 3000,
     3500, 4000, 4500, 5000, 6000, 7000, 8000, 9000, 10000,

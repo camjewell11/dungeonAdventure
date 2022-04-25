@@ -12,6 +12,7 @@ youDied = False
 autotake = 0
 autosneak = 0
 
+# create character and inventory directories if they don't exist
 def setupDirectories():
     workingDir = ""
     if not os.path.exists(workingDir + "characters"):
@@ -19,6 +20,7 @@ def setupDirectories():
     if not os.path.exists(workingDir + "inventories"):
         os.makedirs(workingDir + "inventories")
 
+# swaps current value of autotake for selected character
 def toggle_autotake():
     global autotake
     lines = open(IO.charFile, 'r').readlines()
@@ -35,6 +37,7 @@ def toggle_autotake():
     out.writelines(lines)
     out.close()
 
+# returns value of autotake for selected character
 def get_autotake():
     output = 0
     f = open(IO.charFile, "r")
@@ -44,6 +47,7 @@ def get_autotake():
     f.close()
     return output
 
+# autotake prevents user from having to accept the take prompt every time an item is found
 def set_autotake():
     global autotake
     if get_autotake() == 0:
@@ -51,6 +55,7 @@ def set_autotake():
     else:
         autotake = 1
 
+# swaps current value of autosneak for selected character
 def toggle_autosneak():
     global autosneak
     lines = open(IO.charFile, 'r').readlines()
@@ -67,6 +72,7 @@ def toggle_autosneak():
     out.writelines(lines)
     out.close()
 
+# returns value of autosneak for selected character
 def get_autosneak():
     output = 0
     f = open(IO.charFile, "r")
@@ -76,6 +82,7 @@ def get_autosneak():
     f.close()
     return output
 
+# autosneak prevents user from having to accept the sneak prompt every time an enemy is encountered
 def set_autosneak():
     global autosneak
     if get_autosneak() == 0:
@@ -83,6 +90,8 @@ def set_autosneak():
     else:
         autosneak = 1
 
+# creates a num x num square floor map to be navigated (blindly) by the player
+# sets the starting, current, and ending positions for the level
 def generate_floor(num):
     global floorMap
     num = math.floor((num / 3) + 2)
@@ -104,6 +113,7 @@ def generate_floor(num):
     current = [startX, startY]
     stop = [exitX, exitY]
 
+# displays the floor layout (used exclusively in debugging)
 def print_floor():
     print ("")
     for x in range(len(floorMap)):
@@ -122,6 +132,7 @@ def print_floor():
     print ("Start: %s" % begin)
     print ("Exit: %s\n" % stop)
 
+# presents the option to delete character or toggle autosneak/autotake
 def settings():
     if IO.playerCharacter == 'none':
         character.select_character()
@@ -138,6 +149,7 @@ def settings():
     elif selection == 'q':
         return
 
+# deletes selected character's inventory and character file
 def deleteCharacter():
     chars = os.listdir("characters")
     chars.remove('.gitkeep')
@@ -158,6 +170,7 @@ def deleteCharacter():
         print ("Removed %s.\n" % choice)
         IO.print_dash()
 
+# prompt user to change autotake option
 def promptToggleAutotake():
     print ("Would you like to change autotake? Currently set to %s. (y/n)" % get_autotake())
     choice = input("\n")
@@ -170,6 +183,7 @@ def promptToggleAutotake():
     else:
         print (config.invalidResponse)
 
+# prompt user to change autosneak option
 def promptToggleAutosneak():
     print ("Would you like to change autosneak? Currently set to %s. (y/n)" % get_autosneak())
     choice = input("\n")
@@ -181,13 +195,3 @@ def promptToggleAutosneak():
         print ("Returning to menu.\n")
     else:
         print (config.invalidResponse)
-
-def writeLevelUp(skill):
-    lines = open(IO.charFile, 'r').readlines()
-    temp = int(lines[skill + 4])
-    temp += 1
-    temp = str(temp)
-    lines[skill + 4] = "%s\n" % temp
-    out = open(IO.charFile, 'w')
-    out.writelines(lines)
-    out.close()

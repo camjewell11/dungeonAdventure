@@ -1,6 +1,7 @@
 import os
 import character, config, environment, inventoryManagement, IO
 
+# writes new character and inventory files; prompts for faction selection
 def create_character():
     print ("New Character Creation")
     IO.print_dash()
@@ -45,6 +46,8 @@ def create_character():
     f.write("Gold Pieces:0\n")
     f.close()
 
+# sets environment variable for currently selected character
+# required to know what files to access for gameplay
 def select_character():
     chars = os.listdir("characters")
     print ("Which Character would you like to play as?")
@@ -75,6 +78,8 @@ def select_character():
         environment.set_autotake()
         environment.set_autosneak()
 
+# writes new files containing character name, faction, stats, and status
+# varies between classes only in stating stats
 def createClass(filename, faction):
     f = open(filename, "a")
     f.write("Level\n1\n")
@@ -96,6 +101,7 @@ def createClass(filename, faction):
     f.write("Settings - TS\n0\n0\n")
     f.close()
 
+# returns level of currently selected character
 def get_level():
     output = 0
     f = open(IO.charFile, "r")
@@ -105,6 +111,7 @@ def get_level():
     f.close()
     return output
 
+# returns specific skill level of currently selected character
 def get_skill_level(skill):
     output = -1
     f = open(IO.charFile, "r")
@@ -122,6 +129,7 @@ def get_skill_level(skill):
     f.close()
     return output
 
+# returns xp of currently selected character
 def get_xp():
     output = 0
     f = open(IO.charFile, "r")
@@ -131,6 +139,7 @@ def get_xp():
     f.close()
     return output
 
+# returns faction of currently selected character
 def get_faction():
     output = "none"
     f = open(IO.charFile, "r")
@@ -140,6 +149,7 @@ def get_faction():
     f.close()
     return output
 
+# returns deaths of currently selected character
 def get_deaths():
     output = 0
     f = open(IO.charFile, "r")
@@ -149,6 +159,7 @@ def get_deaths():
     f.close()
     return output
 
+# returns stage of currently selected character
 def get_stage():
     output = 0
     f = open(IO.charFile, "r")
@@ -158,6 +169,7 @@ def get_stage():
     f.close()
     return output
 
+# returns health of currently selected character
 def get_health():
     output = 0
     f = open(IO.charFile, "r")
@@ -167,6 +179,7 @@ def get_health():
     f.close()
     return output
 
+# returns max health of currently selected character
 def get_max_health():
     output = 0
     f = open(IO.charFile, "r")
@@ -176,6 +189,7 @@ def get_max_health():
     f.close()
     return output
 
+# adds xp to character total, calls level up if needed
 def add_xp(num):
     lines = open(IO.charFile, 'r').readlines()
     temp = int(lines[12])
@@ -186,6 +200,7 @@ def add_xp(num):
     out.close()
     update_level()
 
+# updates death count and zeros current xp amount
 def died():
     lines = open(IO.charFile, 'r').readlines()
     temp = int(lines[14])
@@ -200,6 +215,7 @@ def died():
 
     print ("Oh no! You have died!\nYou're XP is reset to the minimum for your level.\n")
 
+# increases stage number for selected character
 def add_stage():
     lines = open(IO.charFile, 'r').readlines()
     temp = int(lines[16])
@@ -209,6 +225,7 @@ def add_stage():
     out.writelines(lines)
     out.close()
 
+# increases health of selected character
 def add_health():
     lines = open(IO.charFile, 'r').readlines()
     temp = int(lines[19])
@@ -218,6 +235,7 @@ def add_health():
     out.writelines(lines)
     out.close()
 
+# sets health of selected character; used by potions likely
 def set_health(num):
     lines = open(IO.charFile, 'r').readlines()
     temp = num
@@ -226,6 +244,7 @@ def set_health(num):
     out.writelines(lines)
     out.close()
 
+# prompts user to upgrade skill for earned skillpoints; sets current health to max
 def level_up():
     if environment.skillPoints == 1 and IO.first:
         print ("\nCongratulations! You have leveled up!\n")
@@ -271,6 +290,7 @@ def level_up():
     add_health()
     set_health(get_max_health())
 
+# writes new level to file; calls level up function to prompt for skill point spending
 def update_level():
     IO.first = True
     new_level = get_level()
@@ -280,20 +300,29 @@ def update_level():
             new_level = i
 
     environment.skillPoints = new_level - get_level()
+    while environment.skillPoints > 0:
+        lines = open(IO.charFile, 'r').readlines()
+        temp = int(new_level)
+        lines[3] = "%s\n" % temp
+        out = open(IO.charFile, 'w')
+        out.writelines(lines)
+        out.close()
+        level_up()
+        environment.skillPoints -= 1
 
-    while True:
-        if environment.skillPoints == 0:
-            break
-        else:
-            lines = open(IO.charFile, 'r').readlines()
-            temp = int(new_level)
-            lines[3] = "%s\n" % temp
-            out = open(IO.charFile, 'w')
-            out.writelines(lines)
-            out.close()
-            level_up()
-            environment.skillPoints -= 1
+# writes new level to character file
+def writeLevelUp(skill):
+    lines = open(IO.charFile, 'r').readlines()
+    temp = int(lines[skill + 4])
+    temp += 1
+    temp = str(temp)
+    lines[skill + 4] = "%s\n" % temp
+    out = open(IO.charFile, 'w')
+    out.writelines(lines)
+    out.close()
 
+# returns the level below the selected character's current level
+# used to determine how much xp needed by the previous level
 def get_level_below():
     level_below = 0
     for i in config.level_table:
@@ -301,6 +330,7 @@ def get_level_below():
             level_below = i
     return level_below
 
+# presents inventory of potions to increase current health
 def heal():
     if get_max_health() == get_health():
         print ("You are already at full health.\n")
@@ -313,13 +343,13 @@ def heal():
                 print ("%s - %s\t      '0'" % config.potionSizes[i], inventoryManagement.has_item(config.potionSizes[i]))
         print ("To cancel             'q'")
 
-        num = buyPotion()
-
+        num = usePotion()
         if num != 0:
             lines = open(IO.charFile, 'r').readlines()
             temp = int(lines[18])
-            if temp + num > get_max_health():
-                temp = get_max_health()
+            maxHealth = get_max_health()
+            if temp + num > maxHealth:
+                temp = maxHealth
             else:
                 temp += num
             print ("You healed %s health points.\n" % num)
@@ -329,7 +359,9 @@ def heal():
             out.close()
             print ("You now have %s health.\n" % get_health())
 
-def buyPotion():
+# removes potion from inventory
+def usePotion():
+    num = 0
     potion = IO.getIntFromUser()
     if potion == 0:
         num = 10
