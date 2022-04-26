@@ -152,7 +152,8 @@ def settings():
 # deletes selected character's inventory and character file
 def deleteCharacter():
     chars = os.listdir("characters")
-    chars.remove('.gitkeep')
+    if os.path.exists("character/.gitkeep"):
+        chars.remove('.gitkeep')
     print ("Which Character would you like to delete?")
     spot = 0
     for i in chars:
