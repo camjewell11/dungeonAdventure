@@ -18,7 +18,7 @@ def create_character():
         f.write(name + "\n")
         IO.printSelectClass()
 
-        selection = IO.getSelectionFromUser(['Wizard','Archer','Warrior','Assassin'], error="That was not a valid selection.")
+        selection = IO.getSelectionFromUser(['1','2','3','4','5'], error="That was not a valid selection.")
         IO.print_dash(True)
         if selection == '5':
             IO.display_faction_stats()
@@ -52,7 +52,8 @@ def select_character():
     chars = os.listdir("characters")
     print ("Which Character would you like to play as?")
     spot = 0
-    chars.remove(".gitkeep")
+    if os.path.exists("character/.gitkeep"):
+        chars.remove(".gitkeep")
     for i in chars:
         chars[spot] = i[:-4]
         print ("- %s" % chars[spot])
