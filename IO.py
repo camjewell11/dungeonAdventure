@@ -7,12 +7,14 @@ charFile = "none"
 inventoryFile = "none"
 first = True
 
+# delimiter for printed instruction
 def print_dash(skip=False):
     if skip:
         print ("------------------------------\n")
     else:
         print ("------------------------------")
 
+# prints main menu
 def printMainMenu():
     print (config.promptAction)
     print_dash()
@@ -22,6 +24,7 @@ def printMainMenu():
     print ("Settings:                4")
     print ("Exit:                    5")
 
+# prints secret menu used to validate individual functions without having to play the game
 def printDebugMenu():
     print ("Secret Debug Menu")
     print_dash()
@@ -33,6 +36,7 @@ def printDebugMenu():
     print ("To create floorMap      'm'")
     print ("To return               'q'")
 
+# print settings menu
 def printSettings():
     print ("         Settings            ")
     print_dash()
@@ -41,6 +45,7 @@ def printSettings():
     print ("To toggle autosneak       's'")
     print ("To quit                   'q'")
 
+# printed when creating character
 def printSelectClass():
     print ("\nSelect Faction")
     print_dash()
@@ -51,6 +56,7 @@ def printSelectClass():
     print_dash()
     print ("View Stats     5\n")
 
+# printed once character selected and play begins
 def printPlayGameOptions():
     print (config.promptAction)
     print ("Continue on to Labyrinth - Stage %s   \t 'c'" % character.get_stage())
@@ -59,6 +65,7 @@ def printPlayGameOptions():
     print ("View my info/progression              \t 'i'")
     print ("Quit                                  \t 'q'")
 
+# printed when exploring a floor; directional options
 def printMoveDirection():
     print ("In which direction would you like to move?")
     print ("To move up           'u'")
@@ -67,6 +74,7 @@ def printMoveDirection():
     print ("To move left         'l'")
     print ("To cancel            'c'")
 
+# prints options for shop interaction
 def printShopPrompt():
     print ("You have %s gold." % inventoryManagement.has_item(config.currencyName))
     print ("")
@@ -75,6 +83,7 @@ def printShopPrompt():
     print ("To buy                 'b'")
     print ("To quit                'q'")
 
+# prints available items in shop
 def printShopOffers():
     print ("You have %s gold." % inventoryManagement.has_item(config.currencyName))
     print ("")
@@ -83,6 +92,7 @@ def printShopOffers():
     print ("To quit                  'q'")
     return items
 
+# prints items in inventory to be sold
 def printInventory():
     items = []
     f = open(inventoryFile, 'r')
@@ -96,6 +106,7 @@ def printInventory():
             items.append(item)
     return items
 
+# prints starting attributes for each of the available factions
 def display_faction_stats():
     while True:
         print ("Which faction would you like to view?")
@@ -155,6 +166,7 @@ def display_faction_stats():
         else:
             print ("That was not a valid selection.")
 
+# prints the selected character's stats
 def display_skills():
     print ("           Skills           ")
     print_dash()
@@ -168,6 +180,7 @@ def display_skills():
     print ("Level:               \t   %s" % character.get_level())
     print ("")
 
+# prints environment variables for selected character
 def display_info():
     print ("Name:               \t   %s" % playerCharacter)
     print ("Faction:            \t   %s" % faction)
@@ -181,16 +194,19 @@ def display_info():
     print ("Health:             \t   %s/%s" % (character.get_health(), character.get_max_health()))
     print_dash(True)
 
+# prints in level options
 def printLevelExplore():
     print (config.promptAction)
     print ("To move             'm'")
     print ("To heal             'h'")
     print ("To quit             'q'")
 
+# prints escape from labyrinth floor
 def printEscape():
     print ("You have escaped the Labyrinth!")
     print_dash(True)
 
+# prints prompt for user to select skill to upgrade
 def printSkillUpgrade():
     print ("Skills remaining to level: %s\n\n" % environment.skillPoints)
     print ("Which level would you like to upgrade?")
@@ -202,6 +218,7 @@ def printSkillUpgrade():
     print ("For Stealth            't'")
     print ("For Luck               'l'")
 
+# prints directional message towards exit in floor
 def printMapHint(stage_num):
     wisdom = character.get_skill_level('wisdom')
     chance = random.randint(0, wisdom * 3)
@@ -212,6 +229,7 @@ def printMapHint(stage_num):
         randy = random.randint(0, 2)
         print (config.directionalMessages[randy] % direction)
 
+# helper to create hint based on current position
 def getDirectionFromCurrentPosition():
     direction = "none"
     if environment.current[0] > environment.stop[0]:
@@ -235,6 +253,7 @@ def getDirectionFromCurrentPosition():
             direction = "east"
     return direction
 
+# prints results of sneak attempt
 def printSneak(stage_num):
     randy = random.randint(0, 2)
     if game.sneak(stage_num):
@@ -244,6 +263,7 @@ def printSneak(stage_num):
         print (config.failedSneakOptions[randy])
         return False
 
+# prompts user for an integer using provided prompt
 def getIntFromUser(prompt=""):
     while True:
         try:
@@ -258,6 +278,7 @@ def getIntFromUser(prompt=""):
     print ("")
     return value
 
+# prompts user for a selection from the provided option with the given prompt
 def getSelectionFromUser(options, prompt="", error=""):
     options.append('q')
     options.append('c')
