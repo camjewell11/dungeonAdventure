@@ -1,4 +1,4 @@
-import random
+import random, time
 import character, config, environment, inventoryManagement, IO
 
 # recursively called to present player with continue, stage selection, info, and shop prompts
@@ -120,6 +120,8 @@ def progress(stage_num):
             print ("")
         randy = random.randint(0, 2)
         if environment.autosneak or choice == 'y':
+            print ("You attempt to sneak by...")
+            time.sleep(1)
             if IO.printSneak(stage_num):
                 return
             break
@@ -197,6 +199,7 @@ def makeYourMove(stage_num, accuracy, luck, max_damage, stats, enemy_health):
     fled = False
     if choice == 'a':
         print ("You attack!\n")
+        time.sleep(1)
         hits = random.randint(1, accuracy * 2)
         if hits > stats[0]:
             if random.randint(0, luck) > random.randint(0, stage_num * 2):
@@ -210,10 +213,12 @@ def makeYourMove(stage_num, accuracy, luck, max_damage, stats, enemy_health):
             print ("Your attack misses!\n")
 
         IO.print_dash(True)
+        time.sleep(1)
     elif choice == 'h':
         character.heal()
     elif choice == 'f':
         print ("You attempt to flee!\n")
+        time.sleep(1)
         if random.randint(character.get_skill_level('stealth') / 2, character.get_skill_level('stealth')) > random.randint(0, stage_num * 2):
             print ("You get away safely...\n")
             fled = True
@@ -226,6 +231,7 @@ def makeYourMove(stage_num, accuracy, luck, max_damage, stats, enemy_health):
 # opponent attacks
 def enemyMove(health, opponent, max_defense, enemy_max_damage):
     print ("The %s attacks!\n" % opponent)
+    time.sleep(1)
     if random.randint(0, max_defense) > random.randint(0, enemy_max_damage):
         print ("You blocked the attack!\n")
     else:
@@ -253,10 +259,12 @@ def sneak(stage_num):
 # generate item; 50-50 chance, followed by 1 in 3 chance
 def itemDrop(stage_num):
     print ("It appears the enemy dropped an item before disappearing into nothing.\n")
+    time.sleep(0.5)
     if random.randint(0, 1) == 1:
         print ("Turns out to be nothing.\n")
     else:
         print ("You approach vicariously.\n")
+        time.sleep(0.5)
         found = inventoryManagement.find_item(stage_num)
         if not found:
             print ("Turns out it was nothing...\n")
