@@ -56,7 +56,7 @@ def select_character():
     chars = os.listdir("characters")
     print ("Which Character would you like to play as?")
     spot = 0
-    if os.path.exists("character/.gitkeep"):
+    if os.path.exists("characters/.gitkeep"):
         chars.remove(".gitkeep")
     for i in chars:
         chars[spot] = i[:-4]

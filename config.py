@@ -239,6 +239,11 @@ level_table = {
     200: 1820000
 }
 
+# equation used to calculate the floor size per stage
+# y = 0.4668x + 1.1303
+floorEquation_1 = 0.4668
+floorEquation_2 = 1.1303
+
 # dictionary of available potions
 potionSizes = [
     "Tiny Potion", "Little Potion", "Small Potion", "Regular Potion", "Big Potion",

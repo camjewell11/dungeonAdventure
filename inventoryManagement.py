@@ -123,7 +123,8 @@ def sellItem():
 
 # prompt user to buy which item and how many
 def buyItem():
-    print ("We have lots to offer!\n")
+    print ("We have lots to offer!")
+    IO.print_dash(True)
     items = IO.printShopOffers()
     items.append('q')
     item = IO.getSelectionFromUser(items, "")

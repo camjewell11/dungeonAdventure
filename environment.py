@@ -93,18 +93,26 @@ def set_autosneak():
 # creates a num x num square floor map to be navigated (blindly) by the player
 # sets the starting, current, and ending positions for the level
 def generate_floor(num):
+    num = round(config.floorEquation_1*num + config.floorEquation_2)
+    requiredGap = math.sqrt(num)
+
     global floorMap
-    num = math.floor((num / 3) + 2)
     floorMap = [[0] * num for _ in range(num)]
 
-    startX = randint(0, num - 1)
-    startY = randint(0, num - 1)
+    gap = False
+    while not gap:
+        startX = randint(0, num - 1)
+        startY = randint(0, num - 1)
 
-    while True:
-        exitX = randint(0, num - 1)
-        exitY = randint(0, num - 1)
-        if exitX != startX or exitY != startY:
-            break
+        while True:
+            exitX = randint(0, num - 1)
+            exitY = randint(0, num - 1)
+            if exitX != startX or exitY != startY:
+                break
+
+        distance = calculateDiagonalDistance(startX, startY, exitX, exitY)
+        if distance >= requiredGap:
+            gap = True
 
     global begin
     global current
@@ -112,6 +120,9 @@ def generate_floor(num):
     begin = [startX, startY]
     current = [startX, startY]
     stop = [exitX, exitY]
+
+def calculateDiagonalDistance(startX, startY, exitX, exitY):
+    return ((startX - exitX)**2 + (startY - exitY)**2)**0.5
 
 # displays the floor layout (used exclusively in debugging)
 def print_floor():

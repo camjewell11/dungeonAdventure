@@ -33,17 +33,18 @@ def play_game():
     elif selection == 'i':
         IO.display_info()
         play_game()
-    elif selection == 'q':
+
+    if selection == 'q':
         return
+    elif selection in ['c','n']:
+        environment.generate_floor(stage_num)
+        print ("You have entered the Labyrinth - Stage %s. Good luck..." % stage_num)
 
-    environment.generate_floor(stage_num)
-    print ("You have entered the Labyrinth - Stage %s. Good luck...\n" % stage_num)
+        IO.printMapHint(stage_num)
+        IO.print_dash(True)
 
-    IO.printMapHint(stage_num)
-    IO.print_dash()
-
-    exploreLevel(stage_num, specific)
-    play_game() # repeat until quit
+        exploreLevel(stage_num, specific)
+        play_game() # repeat until quit
 
 # begins gameplay, explore a generated floor using move and heal commands
 def exploreLevel(stage_num, specific):
@@ -68,6 +69,7 @@ def exploreLevel(stage_num, specific):
         character.heal()
     elif selection == 'q':
         print ("Exiting the Labyrinth.")
+        IO.print_dash(True)
         return
     exploreLevel(stage_num, specific)
 
