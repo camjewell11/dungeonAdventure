@@ -128,7 +128,7 @@ def display_faction_stats():
             print ("Wisdom                8/10")
             print ("Stealth               5/10")
             print ("Luck                  5/10")
-            print_dash()
+            print_dash(True)
             break
         elif selection == '2':
             print ("        Archer       ")
@@ -139,7 +139,7 @@ def display_faction_stats():
             print ("Wisdom                6/10")
             print ("Stealth               6/10")
             print ("Luck                  7/10")
-            print_dash()
+            print_dash(True)
             break
         elif selection == '3':
             print ("        Warrior      ")
@@ -150,7 +150,7 @@ def display_faction_stats():
             print ("Wisdom                3/10")
             print ("Stealth               4/10")
             print ("Luck                  6/10")
-            print_dash()
+            print_dash(True)
             break
         elif selection == '4':
             print ("       Assassin      ")
@@ -161,7 +161,7 @@ def display_faction_stats():
             print ("Wisdom                3/10")
             print ("Stealth               8/10")
             print ("Luck                  8/10")
-            print_dash()
+            print_dash(True)
             break
         else:
             print ("That was not a valid selection.")

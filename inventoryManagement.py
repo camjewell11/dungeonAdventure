@@ -57,7 +57,7 @@ def remove_item(item, numToSell=1):
 
         lines = open(IO.inventoryFile, 'r').readlines()
         quantity -= numToSell
-        if newQuantity == 0:
+        if newQuantity == 0 and item != config.currencyName:
             del lines[line_num]
         else:
             lines[line_num] = "%s:%s\n" % (item, quantity)
