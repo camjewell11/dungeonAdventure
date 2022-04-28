@@ -134,9 +134,9 @@ def progress(stage_num):
             else:
                 print ("Invalid Selection.")
             count += 1
-    IO.print_dash()
+    IO.print_dash(True)
     battle(stage_num)
-    IO.print_dash()
+    IO.print_dash(True)
 
 # battle script; repeats until fled or one member is killed
 def battle(stage_num):
@@ -175,7 +175,7 @@ def battle(stage_num):
             itemDrop(stage_num)
 
             level = character.get_level()
-            print ("Your current XP is %s of %s to level %s.\n" % (character.get_xp(), config.level_table[level + 1], level + 1))
+            print ("Your current XP is %s of %s to level %s." % (character.get_xp(), config.level_table[level + 1], level + 1))
             break
         if turn == 1: # your turn
             print ("You have %s health.             %s has %s health.\n" % (health, opponent, enemy_health))
@@ -183,7 +183,7 @@ def battle(stage_num):
             turn = 2
         elif turn == 2: # opponent turn
             health = enemyMove(health, opponent, max_defense, enemy_max_damage)
-            IO.print_dash()
+            IO.print_dash(True)
             turn = 1
         if fled:
             break
