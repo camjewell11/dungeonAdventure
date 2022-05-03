@@ -53,6 +53,7 @@ def printSelectClass():
 
 def printPlayGameOptions():
     print (config.promptAction)
+    print_dash()
     print ("Continue on to Labyrinth - Stage %s   \t 'c'" % character.get_stage())
     print ("Enter a specific Labyrinth Stage      \t 'n'")
     print ("Enter the general store               \t 's'")
@@ -61,6 +62,7 @@ def printPlayGameOptions():
 
 def printMoveDirection():
     print ("In which direction would you like to move?")
+    print_dash()
     print ("To move up           'u'")
     print ("To move right        'r'")
     print ("To move down         'd'")
@@ -71,6 +73,7 @@ def printShopPrompt():
     print ("You have %s gold." % inventoryManagement.has_item(config.currencyName))
     print ("")
     print (config.promptAction)
+    print_dash()
     print ("To sell                's'")
     print ("To buy                 'b'")
     print ("To quit                'q'")
@@ -79,6 +82,7 @@ def printShopOffers():
     print ("You have %s gold." % inventoryManagement.has_item(config.currencyName))
     print ("")
     print ("What would you like to buy?\n")
+    print_dash()
     items = inventoryManagement.offer_items(character.get_stage())
     print ("To quit                  'q'")
     return items
@@ -183,6 +187,7 @@ def display_info():
 
 def printLevelExplore():
     print (config.promptAction)
+    print_dash()
     print ("To move             'm'")
     print ("To heal             'h'")
     print ("To quit             'q'")
