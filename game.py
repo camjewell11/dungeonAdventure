@@ -1,4 +1,4 @@
-import random
+import random, time
 import character, config, environment, inventoryManagement, IO
 
 # recursively called to present player with continue, stage selection, info, and shop prompts
@@ -33,17 +33,18 @@ def play_game():
     elif selection == 'i':
         IO.display_info()
         play_game()
-    elif selection == 'q':
+
+    if selection == 'q':
         return
+    elif selection in ['c','n']:
+        environment.generate_floor(stage_num)
+        print ("You have entered the Labyrinth - Stage %s. Good luck..." % stage_num)
 
-    environment.generate_floor(stage_num)
-    print ("You have entered the Labyrinth - Stage %s. Good luck...\n" % stage_num)
+        IO.printMapHint(stage_num)
+        IO.print_dash(True)
 
-    IO.printMapHint(stage_num)
-    IO.print_dash()
-
-    exploreLevel(stage_num, specific)
-    play_game() # repeat until quit
+        exploreLevel(stage_num, specific)
+        play_game() # repeat until quit
 
 # begins gameplay, explore a generated floor using move and heal commands
 def exploreLevel(stage_num, specific):
@@ -68,6 +69,7 @@ def exploreLevel(stage_num, specific):
         character.heal()
     elif selection == 'q':
         print ("Exiting the Labyrinth.")
+        IO.print_dash(True)
         return
     exploreLevel(stage_num, specific)
 
@@ -118,6 +120,8 @@ def progress(stage_num):
             print ("")
         randy = random.randint(0, 2)
         if environment.autosneak or choice == 'y':
+            print ("You attempt to sneak by...")
+            time.sleep(1)
             if IO.printSneak(stage_num):
                 return
             break
@@ -130,9 +134,9 @@ def progress(stage_num):
             else:
                 print ("Invalid Selection.")
             count += 1
-    IO.print_dash()
+    IO.print_dash(True)
     battle(stage_num)
-    IO.print_dash()
+    IO.print_dash(True)
 
 # battle script; repeats until fled or one member is killed
 def battle(stage_num):
@@ -171,7 +175,7 @@ def battle(stage_num):
             itemDrop(stage_num)
 
             level = character.get_level()
-            print ("Your current XP is %s of %s to level %s.\n" % (character.get_xp(), config.level_table[level + 1], level + 1))
+            print ("Your current XP is %s of %s to level %s." % (character.get_xp(), config.level_table[level + 1], level + 1))
             break
         if turn == 1: # your turn
             print ("You have %s health.             %s has %s health.\n" % (health, opponent, enemy_health))
@@ -179,7 +183,7 @@ def battle(stage_num):
             turn = 2
         elif turn == 2: # opponent turn
             health = enemyMove(health, opponent, max_defense, enemy_max_damage)
-            IO.print_dash()
+            IO.print_dash(True)
             turn = 1
         if fled:
             break
@@ -195,6 +199,7 @@ def makeYourMove(stage_num, accuracy, luck, max_damage, stats, enemy_health):
     fled = False
     if choice == 'a':
         print ("You attack!\n")
+        time.sleep(1)
         hits = random.randint(1, accuracy * 2)
         if hits > stats[0]:
             if random.randint(0, luck) > random.randint(0, stage_num * 2):
@@ -208,10 +213,12 @@ def makeYourMove(stage_num, accuracy, luck, max_damage, stats, enemy_health):
             print ("Your attack misses!\n")
 
         IO.print_dash(True)
+        time.sleep(1)
     elif choice == 'h':
         character.heal()
     elif choice == 'f':
         print ("You attempt to flee!\n")
+        time.sleep(1)
         if random.randint(character.get_skill_level('stealth') / 2, character.get_skill_level('stealth')) > random.randint(0, stage_num * 2):
             print ("You get away safely...\n")
             fled = True
@@ -224,6 +231,7 @@ def makeYourMove(stage_num, accuracy, luck, max_damage, stats, enemy_health):
 # opponent attacks
 def enemyMove(health, opponent, max_defense, enemy_max_damage):
     print ("The %s attacks!\n" % opponent)
+    time.sleep(1)
     if random.randint(0, max_defense) > random.randint(0, enemy_max_damage):
         print ("You blocked the attack!\n")
     else:
@@ -251,10 +259,12 @@ def sneak(stage_num):
 # generate item; 50-50 chance, followed by 1 in 3 chance
 def itemDrop(stage_num):
     print ("It appears the enemy dropped an item before disappearing into nothing.\n")
+    time.sleep(0.5)
     if random.randint(0, 1) == 1:
         print ("Turns out to be nothing.\n")
     else:
         print ("You approach vicariously.\n")
+        time.sleep(0.5)
         found = inventoryManagement.find_item(stage_num)
         if not found:
             print ("Turns out it was nothing...\n")

@@ -57,7 +57,7 @@ def remove_item(item, numToSell=1):
 
         lines = open(IO.inventoryFile, 'r').readlines()
         quantity -= numToSell
-        if newQuantity == 0:
+        if newQuantity == 0 and item != config.currencyName:
             del lines[line_num]
         else:
             lines[line_num] = "%s:%s\n" % (item, quantity)
@@ -123,7 +123,8 @@ def sellItem():
 
 # prompt user to buy which item and how many
 def buyItem():
-    print ("We have lots to offer!\n")
+    print ("We have lots to offer!")
+    IO.print_dash(True)
     items = IO.printShopOffers()
     items.append('q')
     item = IO.getSelectionFromUser(items, "")

@@ -2,26 +2,26 @@ import os
 import character, config, environment, inventoryManagement, IO
 
 # writes new character and inventory files; prompts for faction selection
-def create_character():
-    print ("New Character Creation")
+def create_character(name=""):
+    print ("New Character Creation " + name)
     IO.print_dash()
 
-    name = input("Enter your name: ")
-    IO.print_dash()
+    if name == "":
+        name = input("Enter your name: ")
+        IO.print_dash()
     filename = "characters/" + name + ".txt"
 
     if os.path.isfile(filename):
         print ("Character already exists.")
         IO.print_dash(True)
+        create_character()
     else:
-        f = open(filename, "w")
-        f.write(name + "\n")
         IO.printSelectClass()
-
         selection = IO.getSelectionFromUser(['1','2','3','4','5'], error="That was not a valid selection.")
         IO.print_dash(True)
         if selection == '5':
             IO.display_faction_stats()
+            create_character(name)
         else:
             if selection == '1':
                 faction = "Wizard"
@@ -31,20 +31,24 @@ def create_character():
                 faction = "Warrior"
             elif selection == '4':
                 faction = "Assassin"
+
+            f = open(filename, "w")
+            f.write(name + "\n")
             f.write("%s\n" % faction)
             f.close()
+
             createClass(filename, faction)
-            print ("Created new character, %s!" % name)
+            print ("Created new %s, %s!" % (faction, name))
             IO.print_dash(True)
 
-    IO.playerCharacter = name
-    IO.charFile = filename
-    IO.inventoryFile = "inventories/" + IO.playerCharacter + ".inv"
+            IO.playerCharacter = name
+            IO.charFile = filename
+            IO.inventoryFile = "inventories/" + IO.playerCharacter + ".inv"
 
-    f = open(IO.inventoryFile, "w")
-    f.write("Inventory\n")
-    f.write("Gold Pieces:0\n")
-    f.close()
+            f = open(IO.inventoryFile, "w")
+            f.write("Inventory\n")
+            f.write("Gold Pieces:0\n")
+            f.close()
 
 # sets environment variable for currently selected character
 # required to know what files to access for gameplay
@@ -52,7 +56,7 @@ def select_character():
     chars = os.listdir("characters")
     print ("Which Character would you like to play as?")
     spot = 0
-    if os.path.exists("character/.gitkeep"):
+    if os.path.exists("characters/.gitkeep"):
         chars.remove(".gitkeep")
     for i in chars:
         chars[spot] = i[:-4]
