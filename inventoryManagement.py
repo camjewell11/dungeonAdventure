@@ -151,7 +151,7 @@ def getItemFromItems(choice, items):
 def offer_items(stage_num):
     costPrompt = "%s \t-\t %d gold"
     items = []
-    print (    costPrompt % (config.potionSizes[0], int(get_cost(config.potionSizes[0])*1.2)))
+    print (costPrompt % (config.potionSizes[0], int(get_cost(config.potionSizes[0])*1.2)))
     items.append(config.potionSizes[0])
     if stage_num > 1:
         print (costPrompt % (config.potionSizes[1], int(get_cost(config.potionSizes[1])*1.2)))
@@ -198,7 +198,7 @@ def find_item(stage_num):
             print ("You found %s Gold Pieces." % amountGold)
         elif item:
             print ("You found a %s.\n" % item)
-        elif item == False:
+        elif not item:
             return
 
         promptTakeItem(amountGold, item)
@@ -209,11 +209,12 @@ def find_item(stage_num):
 
 # display to user to take item; take automatically if setting enabled
 def promptTakeItem(amountGold, item):
-    if not environment.autotake:
+    choice = None
+    if not environment.autoTake:
         print ("Would you like to take it? (y/n)")
         choice = input("\n")
         print ("")
-    if environment.autotake or choice == 'y':
+    if environment.autoTake or choice == 'y':
         if amountGold > 1:
             print ("You take the gold.\n")
         else:

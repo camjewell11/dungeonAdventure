@@ -9,8 +9,8 @@ stop = []
 current = []
 youDied = False
 
-autotake = 0
-autosneak = 0
+autoTake = 0
+autoSneak = 0
 
 # create character and inventory directories if they don't exist
 def setupDirectories():
@@ -20,25 +20,25 @@ def setupDirectories():
     if not os.path.exists(workingDir + "inventories"):
         os.makedirs(workingDir + "inventories")
 
-# swaps current value of autotake for selected character
-def toggle_autotake():
-    global autotake
+# swaps current value of autoTake for selected character
+def toggle_autoTake():
+    global autoTake
     lines = open(IO.charFile, 'r').readlines()
     temp = int(lines[21])
     if temp == 1:
         temp = 0
-        autotake = 0
+        autoTake = 0
     elif temp == 0:
         temp = 1
-        autotake = 1
+        autoTake = 1
 
     lines[21] = "%s\n" % temp
     out = open(IO.charFile, 'w')
     out.writelines(lines)
     out.close()
 
-# returns value of autotake for selected character
-def get_autotake():
+# returns value of autoTake for selected character
+def get_autoTake():
     output = 0
     f = open(IO.charFile, "r")
     for i, line in enumerate(f):
@@ -47,33 +47,33 @@ def get_autotake():
     f.close()
     return output
 
-# autotake prevents user from having to accept the take prompt every time an item is found
-def set_autotake():
-    global autotake
-    if get_autotake() == 0:
-        autotake = 0
+# autoTake prevents user from having to accept the take prompt every time an item is found
+def set_autoTake():
+    global autoTake
+    if get_autoTake() == 0:
+        autoTake = 0
     else:
-        autotake = 1
+        autoTake = 1
 
-# swaps current value of autosneak for selected character
-def toggle_autosneak():
-    global autosneak
+# swaps current value of autoSneak for selected character
+def toggle_autoSneak():
+    global autoSneak
     lines = open(IO.charFile, 'r').readlines()
     temp = int(lines[22])
     if temp == 1:
         temp = 0
-        autosneak = 0
+        autoSneak = 0
     elif temp == 0:
         temp = 1
-        autosneak = 1
+        autoSneak = 1
 
     lines[22] = "%s\n" % temp
     out = open(IO.charFile, 'w')
     out.writelines(lines)
     out.close()
 
-# returns value of autosneak for selected character
-def get_autosneak():
+# returns value of autoSneak for selected character
+def get_autoSneak():
     output = 0
     f = open(IO.charFile, "r")
     for i, line in enumerate(f):
@@ -82,13 +82,13 @@ def get_autosneak():
     f.close()
     return output
 
-# autosneak prevents user from having to accept the sneak prompt every time an enemy is encountered
-def set_autosneak():
-    global autosneak
-    if get_autosneak() == 0:
-        autosneak = 0
+# autoSneak prevents user from having to accept the sneak prompt every time an enemy is encountered
+def set_autoSneak():
+    global autoSneak
+    if get_autoSneak() == 0:
+        autoSneak = 0
     else:
-        autosneak = 1
+        autoSneak = 1
 
 # creates a num x num square floor map to be navigated (blindly) by the player
 # sets the starting, current, and ending positions for the level
@@ -100,6 +100,10 @@ def generate_floor(num):
     floorMap = [[0] * num for _ in range(num)]
 
     gap = False
+    startX = 0
+    startY = 0
+    exitX = 0
+    exitY = 0
     while not gap:
         startX = randint(0, num - 1)
         startY = randint(0, num - 1)
@@ -143,7 +147,7 @@ def print_floor():
     print ("Start: %s" % begin)
     print ("Exit: %s\n" % stop)
 
-# presents the option to delete character or toggle autosneak/autotake
+# presents the option to delete character or toggle autoSneak/autoTake
 def settings():
     if IO.playerCharacter == 'none':
         character.select_character()
@@ -154,9 +158,9 @@ def settings():
     if selection == 'd':
         deleteCharacter()
     elif selection == 't':
-        promptToggleAutotake()
+        promptToggleAutoTake()
     elif selection == 's':
-        promptToggleAutosneak()
+        promptToggleAutoSneak()
     elif selection == 'q':
         return
 
@@ -182,27 +186,27 @@ def deleteCharacter():
         print ("Removed %s.\n" % choice)
         IO.print_dash()
 
-# prompt user to change autotake option
-def promptToggleAutotake():
-    print ("Would you like to change autotake? Currently set to %s. (y/n)" % get_autotake())
+# prompt user to change autoTake option
+def promptToggleAutoTake():
+    print ("Would you like to change autoTake? Currently set to %s. (y/n)" % get_autoTake())
     choice = input("\n")
     print ("")
     if choice == 'y':
-        toggle_autotake()
-        print ("Autotake is now %s.\n" % get_autotake())
+        toggle_autoTake()
+        print ("AutoTake is now %s.\n" % get_autoTake())
     elif choice == 'n':
         print ("Returning to menu.\n")
     else:
         print (config.invalidResponse)
 
-# prompt user to change autosneak option
-def promptToggleAutosneak():
-    print ("Would you like to change autosneak? Currently set to %s. (y/n)" % get_autosneak())
+# prompt user to change autoSneak option
+def promptToggleAutoSneak():
+    print ("Would you like to change autoSneak? Currently set to %s. (y/n)" % get_autoSneak())
     choice = input("\n")
     print ("")
     if choice == 'y':
-        toggle_autosneak()
-        print ("Autosneak is now %s.\n" % get_autosneak())
+        toggle_autoSneak()
+        print ("AutoSneak is now %s.\n" % get_autoSneak())
     elif choice == 'n':
         print ("Returning to menu.\n")
     else:

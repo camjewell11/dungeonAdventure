@@ -41,8 +41,8 @@ def printSettings():
     print ("         Settings            ")
     print_dash()
     print ("To Delete Character       'd'")
-    print ("To toggle autotake items  't'")
-    print ("To toggle autosneak       's'")
+    print ("To toggle autoTake items  't'")
+    print ("To toggle autoSneak       's'")
     print ("To quit                   'q'")
 
 # printed when creating character
@@ -76,7 +76,7 @@ def printMoveDirection():
     print ("To move left         'l'")
     print ("To cancel            'c'")
 
-# prints options for shop interaction
+# print options for shop interaction
 def printShopPrompt():
     print ("You have %s gold." % inventoryManagement.has_item(config.currencyName))
     print ("")
@@ -258,7 +258,7 @@ def getDirectionFromCurrentPosition():
             direction = "east"
     return direction
 
-# prints results of sneak attempt
+# print results of sneak attempt
 def printSneak(stage_num):
     randy = random.randint(0, 2)
     if game.sneak(stage_num):

@@ -1,5 +1,5 @@
 import os
-import character, config, environment, inventoryManagement, IO
+import config, environment, inventoryManagement, IO
 
 # writes new character and inventory files; prompts for faction selection
 def create_character(name=""):
@@ -31,6 +31,8 @@ def create_character(name=""):
                 faction = "Warrior"
             elif selection == '4':
                 faction = "Assassin"
+            else:
+                faction = None
 
             f = open(filename, "w")
             f.write(name + "\n")
@@ -80,8 +82,8 @@ def select_character():
         IO.charFile = "characters/%s.txt" % choice
         IO.inventoryFile = "inventories/%s.inv" % choice
         IO.faction = get_faction()
-        environment.set_autotake()
-        environment.set_autosneak()
+        environment.set_autoTake()
+        environment.set_autoSneak()
         return True
     else:
         return False
@@ -146,8 +148,8 @@ def get_skill_level(skill):
             i ==  8 and skill == 'wisdom'   or \
             i ==  9 and skill == 'stealth'  or \
             i == 10 and skill == 'luck':
-                output = int(line[:-1])
-                break
+            output = int(line[:-1])
+            break
         else:
             output = -1
     f.close()
@@ -233,9 +235,9 @@ def died():
     out = open(IO.charFile, 'w')
     out.writelines(lines)
     out.close()
-    add_xp((config.level_table[get_level_below()] - character.get_xp()))
+    add_xp((config.level_table[get_level_below()] - get_xp()))
     update_level()
-    set_health(character.get_max_health())
+    set_health(get_max_health())
 
     print ("Oh no! You have died!\nYou're XP is reset to the minimum for your level.\n")
 
@@ -268,7 +270,7 @@ def set_health(num):
     out.writelines(lines)
     out.close()
 
-# prompts user to upgrade skill for earned skillpoints; sets current health to max
+# prompts user to upgrade skill for earned skill points; sets current health to max
 def level_up():
     if environment.skillPoints == 1 and IO.first:
         print ("\nCongratulations! You have leveled up!\n")
@@ -364,7 +366,7 @@ def heal():
 
         for i in range(8):
             if inventoryManagement.has_item(config.potionSizes[i]) >= 0:
-                print ("%s - %s\t      '0'" % config.potionSizes[i], inventoryManagement.has_item(config.potionSizes[i]))
+                print ("%s - %s\t\t '0'" % (config.potionSizes[i], inventoryManagement.has_item(config.potionSizes[i])))
         print ("To cancel             'q'")
 
         num = usePotion()
