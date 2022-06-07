@@ -53,5 +53,5 @@ def debug_menu():
 if __name__ == '__main__':
     environment.setupDirectories()
 
-    print ("Welcome to Cam's Prototype game!\n")
+    print ("Welcome to Cam's Dungeon Adventure!\n")
     start()
